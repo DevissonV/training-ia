@@ -68,8 +68,34 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
 
 .chip{display:inline-flex;align-items:center;justify-content:center;padding:9px 16px;border-radius:10px;font-size:15px;font-weight:700;background:var(--gold-lt);color:#5B21B6;border:2px solid rgba(124,58,237,.3);margin:3px;cursor:default;transition:transform .15s}
 .chip.fill{background:var(--coral);color:#fff;border-color:var(--coral)}
-.deskbox{border:3px dashed rgba(0,0,0,.15);border-radius:16px;padding:16px;min-height:160px;display:flex;flex-wrap:wrap;align-content:flex-start;gap:5px;width:100%;position:relative}
-.deskbox.full{border-color:var(--coral);background:var(--coral-lt)}
+/* Ejercicio: ventana de contexto (drag & drop, cupo 5) */
+.ctx-bank{display:flex;flex-wrap:wrap;gap:8px;width:100%;max-width:1100px}
+.ctx-item{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:10px;font-size:15px;font-weight:700;background:var(--gold-lt);color:#5B21B6;border:2px solid rgba(124,58,237,.3);cursor:grab;user-select:none;transition:transform .15s,opacity .2s,background .2s,border-color .2s}
+.ctx-item:hover{transform:translateY(-2px);border-color:var(--gold)}
+.ctx-item:active{cursor:grabbing}
+.ctx-item.dragging{opacity:.4}
+.ctx-item.used{opacity:.3;cursor:default;transform:none;border-style:dashed}
+.ctx-item.forgot{background:var(--coral-lt);color:#B8330E;border-color:var(--coral);animation:ctxShake .5s ease}
+.ctx-wrap{display:flex;align-items:stretch;gap:12px;width:100%;max-width:1100px;margin-top:16px}
+.ctx-side{display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--muted);width:64px;text-align:center;line-height:1.3}
+.ctx-side span{font-size:22px}
+.ctx-box{flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:10px;border:3px dashed rgba(0,0,0,.18);border-radius:18px;padding:14px;background:var(--paper);transition:all .2s}
+.ctx-box.over{border-color:var(--gold);background:var(--gold-lt)}
+.ctx-box.full{border-color:var(--coral);border-style:solid}
+.ctx-slot{height:92px;border-radius:12px;background:rgba(0,0,0,.035);border:2px dashed rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;position:relative}
+.ctx-slot::before{content:attr(data-n);position:absolute;top:6px;left:9px;font-size:11px;font-weight:800;color:rgba(0,0,0,.25)}
+.ctx-card{width:calc(100% - 12px);min-height:62px;border-radius:10px;background:var(--coral);color:#fff;font-size:14px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8px;box-shadow:0 4px 0 rgba(0,0,0,.12);line-height:1.25}
+.ctx-card .ico{font-size:20px;margin-bottom:3px}
+.ctx-card.enter{animation:ctxIn .35s ease}
+.ctx-card.out{animation:ctxOut .38s ease forwards}
+.ctx-bar{display:flex;align-items:center;gap:14px;width:100%;max-width:1100px;margin-top:10px}
+.ctx-meter{font-size:14px;font-weight:800;color:var(--ink);white-space:nowrap}
+.ctx-msg{flex:1;font-size:14px;color:var(--coral);font-weight:700;min-height:18px}
+.ctx-reset{background:none;border:2px solid var(--line);border-radius:20px;padding:6px 14px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer}
+.ctx-reset:hover{border-color:var(--coral);color:var(--coral)}
+@keyframes ctxIn{from{opacity:0;transform:translateX(30px) scale(.9)}to{opacity:1;transform:none}}
+@keyframes ctxOut{to{opacity:0;transform:translate(-50px,30px) rotate(-12deg)}}
+@keyframes ctxShake{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 
 .quizbtn{display:block;width:100%;text-align:left;background:var(--paper);border:2px solid var(--line);border-radius:12px;padding:14px 18px;font-size:16px;font-family:'Inter',sans-serif;font-weight:500;color:var(--ink);cursor:pointer;margin-bottom:9px;transition:all .15s}
 .quizbtn:hover{border-color:var(--coral)}
@@ -110,19 +136,230 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
 .spoke{width:70px;height:2px;background:var(--line)}
 .tile{color:var(--ink)}
 .tile p{color:var(--muted)}
+
+/* ===== Interactivos comunes ===== */
+.ibtn{display:inline-flex;align-items:center;gap:6px;background:var(--coral);color:#fff;border:2px solid var(--coral);border-radius:22px;padding:9px 18px;font-family:'Inter',sans-serif;font-size:14.5px;font-weight:700;cursor:pointer;transition:transform .15s,background .15s,opacity .2s}
+.ibtn:hover{transform:translateY(-2px)}
+.ibtn:disabled{opacity:.4;cursor:default;transform:none}
+.ibtn.ghost{background:transparent;color:var(--muted);border-color:var(--line)}
+.ibtn.ghost:hover{color:var(--coral);border-color:var(--coral)}
+.slide.dark .ibtn.ghost{color:rgba(243,238,228,.7);border-color:rgba(255,255,255,.2)}
+.ibtn.gold{background:var(--gold);border-color:var(--gold)}
+.ibtn.pulse{animation:iPulse 1.2s ease infinite}
+@keyframes iPulse{0%,100%{box-shadow:0 0 0 0 rgba(124,58,237,.5)}50%{box-shadow:0 0 0 10px rgba(124,58,237,0)}}
+@keyframes iPop{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes iShake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.pop{animation:iPop .35s ease both}
+.shake{animation:iShake .45s ease}
+.hint{font-size:12.5px;color:var(--muted);font-style:italic}
+.slide.dark .hint{color:rgba(243,238,228,.5)}
+
+/* Notas del presentador (tecla N) */
+.notes{display:none}
+#notesPanel{position:fixed;right:22px;bottom:80px;width:440px;max-height:48vh;overflow:auto;background:rgba(21,16,42,.97);color:rgba(243,238,228,.88);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:18px 20px;z-index:1500;font-size:14px;line-height:1.6;display:none;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+#notesPanel.open{display:block}
+#notesPanel h6{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#FF9B7D;margin-bottom:8px}
+#notesPanel p{margin-bottom:8px}
+
+/* S3 · Completa la frase */
+.pred{width:100%;max-width:820px;background:var(--paper);border:2px solid var(--line);border-radius:18px;padding:20px 24px}
+.pred-sentence{font-family:'Fraunces',serif;font-size:30px;font-weight:500;color:var(--ink);min-height:44px;margin-bottom:14px}
+.pred-w{color:var(--coral);animation:iPop .3s ease both;display:inline-block;white-space:pre}
+.pred-caret{display:inline-block;width:3px;height:30px;background:var(--coral);margin-left:4px;vertical-align:-4px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.pred-label{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:8px}
+.pred-opts{display:flex;flex-direction:column;gap:7px;min-height:150px}
+.pred-opt{display:grid;grid-template-columns:140px 1fr 52px;align-items:center;gap:12px;background:none;border:2px solid var(--line);border-radius:10px;padding:7px 12px;cursor:pointer;font-family:'Inter',sans-serif;text-align:left;transition:border-color .15s,background .15s}
+.pred-opt:hover,.pred-opt.hl{border-color:var(--coral);background:var(--coral-lt)}
+.pred-opt b{font-size:16px;color:var(--ink)}
+.pred-bar{height:10px;border-radius:6px;background:var(--line);overflow:hidden}
+.pred-bar i{display:block;height:100%;background:var(--coral);border-radius:6px;width:0;transition:width .5s ease}
+.pred-opt span{font-size:14px;font-weight:800;color:var(--muted);text-align:right}
+.pred-done{font-size:15px;font-weight:700;color:#036B57;background:var(--teal-lt);border-radius:10px;padding:12px 14px;animation:iPop .35s ease both}
+.pred-actions{display:flex;gap:10px;margin-top:14px}
+
+/* S4 · Cortador de fichas */
+.tok{width:100%;max-width:900px}
+.tok-in{width:100%;font-family:'Inter',sans-serif;font-size:20px;padding:12px 16px;border:2px solid var(--line);border-radius:12px;outline:none;color:var(--ink);background:var(--bg)}
+.tok-in:focus{border-color:var(--coral)}
+.tok-ex{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px;font-size:13px;color:var(--muted);font-weight:600}
+.tok-ex button{background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:4px 11px;font-family:'Inter',sans-serif;font-size:12.5px;cursor:pointer;color:var(--ink)}
+.tok-ex button:hover{border-color:var(--coral)}
+.tok-out{display:flex;flex-wrap:wrap;gap:6px;min-height:56px;margin-top:14px;padding:12px;border-radius:12px;background:var(--bg)}
+.tok-t{padding:8px 12px;border-radius:8px;font-size:17px;font-weight:700;animation:iPop .25s ease both}
+.tok-c0{background:var(--coral-lt);color:#B8330E}.tok-c1{background:var(--gold-lt);color:#5B21B6}.tok-c2{background:var(--teal-lt);color:#036B57}.tok-c3{background:var(--pink-lt);color:#A3145A}
+.tok-count{display:flex;align-items:center;gap:16px;margin-top:12px;font-size:15px;color:var(--muted)}
+.tok-count b{font-size:28px;color:var(--ink);margin-right:4px}
+.tok-count b.t{color:var(--coral)}
+
+/* S5 · El contexto se acumula */
+.acc{display:flex;gap:30px;align-items:center;width:100%}
+.acc-stage{flex:0 0 540px;height:280px;display:flex;align-items:center;justify-content:center;transition:opacity .4s,transform .4s}
+.acc-stage.closing{opacity:0;transform:scale(.85)}
+.acc-empty{border:3px dashed rgba(0,0,0,.15);border-radius:22px;width:420px;height:120px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:700}
+.acc-l{border:3px solid;border-radius:20px;padding:32px 12px 12px;position:relative}
+.acc-new{animation:iPop .35s ease both}
+.acc-lab{position:absolute;top:8px;left:14px;font-size:12.5px;font-weight:800;white-space:nowrap}
+.acc-core{border-radius:12px;padding:12px 18px;font-weight:700;font-size:14px;color:#fff;background:var(--coral);white-space:nowrap}
+.acc-ctrl{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.acc-stat{display:flex;align-items:center;gap:12px;margin-top:8px}
+.acc-stat b{font-family:'Fraunces',serif;font-size:56px;color:var(--coral);line-height:1}
+.acc-stat small{font-size:14px;color:var(--muted);max-width:210px;line-height:1.4}
+.acc-msg{font-size:14.5px;font-weight:700;color:#036B57;min-height:42px;max-width:340px;line-height:1.45}
+
+/* S7 · Memoria de la herramienta */
+.mem{display:flex;gap:18px;width:100%;align-items:stretch;margin-top:6px}
+.mem-col{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:9px;min-height:250px}
+.mem-day{font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#FF9B7D}
+.bub{max-width:88%;padding:10px 14px;border-radius:14px;font-size:14.5px;line-height:1.45;animation:iPop .35s ease both}
+.bub.user{align-self:flex-end;background:var(--coral);color:#fff;border-bottom-right-radius:4px}
+.bub.ai{align-self:flex-start;background:rgba(255,255,255,.12);color:#F3EEE4;border-bottom-left-radius:4px}
+.mem-empty{margin:auto;color:rgba(243,238,228,.35);font-weight:600}
+.mem-mid{flex:0 0 270px;display:flex;flex-direction:column;align-items:center;gap:12px;justify-content:center}
+.mem-model{width:100%;text-align:center;background:rgba(124,58,237,.22);border:2px solid rgba(167,139,250,.5);border-radius:16px;padding:14px;font-size:30px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.mem-model b{font-size:15px;color:#F3EEE4}
+.mem-model small{font-size:12.5px;color:rgba(243,238,228,.65)}
+.mem-stamp{font-size:11.5px;font-weight:800;color:#8FE9D3;background:rgba(0,163,136,.2);border-radius:10px;padding:3px 10px;margin-top:6px}
+.mem-stamp.flash{animation:iShake .45s ease}
+.mem-switch{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13.5px;font-weight:700;color:#F3EEE4;user-select:none}
+.mem-switch input{display:none}
+.sw{width:46px;height:26px;border-radius:13px;background:rgba(255,255,255,.2);position:relative;transition:background .2s;flex:0 0 46px}
+.sw::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .2s}
+.mem-switch input:checked+.sw{background:var(--teal)}
+.mem-switch input:checked+.sw::after{left:23px}
+.mem-note{width:100%;background:var(--gold-lt);color:#5B21B6;border-radius:10px;padding:10px 12px;font-size:13.5px;font-weight:700;text-align:center;transition:opacity .3s,transform .3s;opacity:.15;transform:scale(.95)}
+.mem-note.on{opacity:1;transform:none}
+.mem-note.send{animation:noteSend .6s ease}
+@keyframes noteSend{50%{transform:translateX(40px) scale(1.05)}}
+.mem-pass{align-self:center;font-size:12.5px;font-weight:700;color:#5B21B6;background:var(--gold-lt);border-radius:10px;padding:5px 10px;animation:iPop .35s ease both}
+.mem-res{align-self:flex-start;font-size:12px;font-weight:800;border-radius:10px;padding:4px 10px;animation:iPop .35s ease both}
+.mem-res.bad{background:rgba(255,90,54,.2);color:#FF9B7D}
+.mem-res.good{background:rgba(0,163,136,.22);color:#8FE9D3}
+
+/* S9 · Fuentes de contexto */
+.src{display:flex;gap:22px;width:100%;align-items:flex-start}
+.src-togs{flex:0 0 310px;display:flex;flex-direction:column;gap:10px}
+.src-tog{text-align:left;background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:12px;transition:all .2s}
+.src-tog .sw{background:var(--line)}
+.src-tog.on{border-color:var(--teal);background:var(--teal-lt)}
+.src-tog.on .sw{background:var(--teal)}
+.src-tog.on .sw::after{left:23px}
+.src-tog b{display:block;font-size:15px;color:var(--ink)}
+.src-tog small{font-size:12.5px;color:var(--muted)}
+.src-main{flex:1;display:flex;flex-direction:column;gap:10px}
+.src-q{font-size:17px;font-weight:700;color:var(--ink);background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:12px 16px}
+.src-box{display:flex;flex-wrap:wrap;gap:6px;align-items:center;border:2px dashed rgba(0,0,0,.15);border-radius:12px;padding:9px 12px;font-size:13px;color:var(--muted);font-weight:700}
+.src-chip{background:var(--coral);color:#fff;border-radius:8px;padding:4px 10px;font-size:12.5px;animation:iPop .3s ease both}
+.src-ans{background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:14px 18px;min-height:130px}
+.src-tag{display:inline-block;font-size:12px;font-weight:800;border-radius:10px;padding:4px 10px;margin-bottom:8px}
+.src-txt{font-size:15.5px;line-height:1.6;color:var(--ink)}
+.src-txt ul{padding-left:20px}
+
+/* S10 · MCP */
+.mcp{width:100%;display:flex;flex-direction:column;gap:10px}
+.mcp-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.seg{display:inline-flex;background:var(--paper);border:2px solid var(--line);border-radius:22px;padding:3px}
+.seg button{border:none;background:none;padding:7px 16px;border-radius:18px;font-family:'Inter',sans-serif;font-weight:700;font-size:14px;color:var(--muted);cursor:pointer}
+.seg button.on{background:var(--ink);color:#fff}
+.mcp-count{font-size:15px;color:var(--muted);margin-left:auto}
+.mcp-count b{font-size:24px;color:var(--coral)}
+.mcp-svg{width:100%;max-width:1000px;height:290px;background:var(--paper);border:2px solid var(--line);border-radius:18px;font-family:'Inter',sans-serif}
+.mcp-svg .ln{fill:none;stroke-width:3;stroke-dasharray:1;stroke-dashoffset:1;animation:draw .7s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.mcp-msg{font-size:14px;font-weight:700;color:var(--coral);min-height:18px}
+
+/* S11 · Prompt -> skill */
+.sk{width:100%}
+.sk-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sk-banner{display:none;align-items:center;gap:6px;background:var(--gold-lt);color:#5B21B6;border:2px solid var(--gold);border-radius:22px;padding:7px 14px;font-weight:800;font-size:14px}
+.sk-banner.on{display:inline-flex;animation:iPop .35s ease both}
+.sk-stats{margin-left:auto;display:flex;gap:18px;font-size:13.5px;color:var(--muted)}
+.sk-stats b{font-size:24px;color:var(--ink);margin-right:3px}
+.sk-track{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:12px;min-height:128px}
+.sk-card{border-radius:14px;padding:12px;border:2px solid var(--line);background:var(--paper);display:flex;flex-direction:column;gap:5px;animation:iPop .35s ease both;font-size:13px}
+.sk-card .d{font-weight:800;font-size:13px;color:var(--ink)}
+.sk-card .p{color:var(--muted);font-style:italic;line-height:1.35;min-height:34px}
+.sk-card .m{font-weight:800;color:var(--coral)}
+.sk-card .f{align-self:flex-start;border-radius:8px;padding:2px 8px;font-weight:800;font-size:11.5px}
+.sk-card.skill{border-color:var(--gold);background:var(--gold-lt)}
+.sk-card.skill .m{color:#036B57}
+.sk-track:empty::before{content:"Aquí aparecerá cada día de la semana.";grid-column:1/-1;display:flex;align-items:center;justify-content:center;border:2px dashed rgba(0,0,0,.12);border-radius:14px;color:var(--muted);font-weight:600;font-size:14px}
+.sk-msg{font-size:14px;font-weight:700;color:#5B21B6;min-height:20px;margin-top:8px}
+
+/* S13 · Agente */
+.ag{width:100%;display:flex;flex-direction:column;gap:14px}
+.ag-cases{display:flex;gap:10px;flex-wrap:wrap}
+.ag-case{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.18);color:#F3EEE4;border-radius:12px;padding:10px 16px;font-family:'Inter',sans-serif;font-size:14.5px;font-weight:700;cursor:pointer;transition:all .2s}
+.ag-case:hover,.ag-case.on{border-color:#FF9B7D;background:rgba(255,90,54,.18)}
+.ag-stage{display:flex;gap:30px;align-items:center}
+.ag-dia{display:flex;align-items:center;gap:26px;flex:0 0 auto}
+.ag-node{transition:all .3s;opacity:.4}
+.ag.idle .ag-node,.ag-node.used{opacity:1}
+.ag-node.on{opacity:1;transform:scale(1.07);box-shadow:0 0 0 4px rgba(255,155,125,.7)}
+.ag-log{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:14px 16px;min-height:220px;display:flex;flex-direction:column;gap:8px}
+.ag-line{font-size:14.5px;color:rgba(243,238,228,.88);line-height:1.45;animation:iPop .3s ease both;display:flex;gap:8px}
+.ag-line i{font-style:normal;font-weight:800;color:#FF9B7D;flex:0 0 18px}
+.ag-empty{margin:auto;color:rgba(243,238,228,.4);font-weight:600}
+
+/* S14 · Emparejar */
+.mt{width:100%}
+.mt-bank{display:flex;gap:10px;flex-wrap:wrap;min-height:48px}
+.mt-item{background:var(--paper);border:2px solid var(--line);border-radius:12px;padding:10px 14px;font-size:14.5px;font-weight:700;color:var(--ink);cursor:grab;user-select:none;transition:all .15s}
+.mt-item:hover,.mt-item.sel{border-color:var(--coral);background:var(--coral-lt)}
+.mt-zones{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px;width:100%}
+.mt-zone{background:var(--paper);border:2px dashed rgba(0,0,0,.18);border-radius:16px;padding:14px;min-height:170px;display:flex;flex-direction:column;gap:10px;transition:background .2s,border-color .2s;cursor:pointer}
+.mt-zone.over{border-color:var(--coral);background:var(--coral-lt)}
+.mt-zone.done{border-style:solid;border-color:var(--teal);background:var(--teal-lt);cursor:default}
+.mt-drop{flex:1;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--muted);font-weight:600;border-radius:10px;background:rgba(0,0,0,.03);min-height:50px;padding:8px;text-align:center}
+.mt-zone.done .mt-drop{background:#fff;color:var(--ink);font-weight:700}
+.mt-meta{display:none;gap:16px;font-size:13px;color:#036B57;font-weight:700}
+.mt-zone.done .mt-meta{display:flex;animation:iPop .35s ease both}
+.mt-bar{display:flex;align-items:center;gap:10px;margin-top:10px;width:100%}
+.mt-msg{flex:1;font-size:14px;font-weight:700;color:var(--coral);min-height:20px}
+.mt-msg.ok{color:#036B57}
+
+/* S15 · Costos y riesgos */
+.cs-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:20px 22px}
+.cs-card h4{font-size:15px;margin-bottom:6px;color:#FF9B7D}
+.cs-q{font-size:14px;color:rgba(243,238,228,.75);margin-bottom:10px}
+.cs-range{width:100%;accent-color:var(--coral);cursor:pointer}
+.cs-val{font-size:20px;font-weight:800;color:#F8F4EC;margin:8px 0 12px;min-height:28px}
+.cs-row{display:grid;grid-template-columns:150px 1fr 80px;gap:10px;align-items:center;font-size:13.5px;color:rgba(243,238,228,.8);margin-bottom:9px}
+.cs-bg{height:12px;border-radius:6px;background:rgba(255,255,255,.1);overflow:hidden}
+.cs-bg i{display:block;height:100%;border-radius:6px;background:var(--coral);transition:width .4s ease}
+.cs-lvl{display:flex;gap:6px;margin-bottom:10px}
+.cs-lvl span{flex:1;height:12px;border-radius:6px;background:rgba(255,255,255,.1);transition:background .3s}
+.cs-act{font-size:15px;font-weight:700;color:#8FE9D3;min-height:22px}
+.cs-never{margin-top:12px;font-size:13px;color:rgba(243,238,228,.65)}
+
+/* S16 · Quiz final */
+.qz{width:100%;max-width:920px}
+.qz-top{display:flex;justify-content:space-between;font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.qz-card{font-family:'Fraunces',serif;font-size:25px;font-weight:500;color:var(--ink);background:var(--paper);border:2px solid var(--line);border-radius:18px;padding:22px 26px;margin:10px 0 12px;min-height:100px;display:flex;align-items:center}
+.qz-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.qz-opt{background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;font-family:'Inter',sans-serif;text-align:left;transition:all .15s}
+.qz-opt:hover:not(:disabled){border-color:var(--coral)}
+.qz-opt b{display:block;font-size:17px;color:var(--ink)}
+.qz-opt small{font-size:13px;color:var(--muted)}
+.qz-opt.correct{background:var(--teal-lt);border-color:var(--teal)}
+.qz-opt.wrong{background:var(--coral-lt);border-color:var(--coral);opacity:.8}
+.qz-opt:disabled{cursor:default}
+.qz-fb{font-size:15px;font-weight:600;color:var(--ink);min-height:24px;margin:12px 0 8px;line-height:1.5}
 </style>
 </head>
 <body>
 
 <div id="pgbar"><div id="pgfill" style="width:6.25%"></div></div>
 <div id="kbh">
-  <span class="kbd">← →</span><span class="kbd">espacio</span><span class="kbd">R reiniciar</span><span class="kbd">I índice</span>
+  <span class="kbd">← →</span><span class="kbd">espacio</span><span class="kbd">R reiniciar</span><span class="kbd">I índice</span><span class="kbd">N notas</span>
 </div>
 <div id="idx">
   <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Navegar a</div>
   <div class="idxg" id="idxg"></div>
   <div style="margin-top:18px;font-size:11px;color:rgba(255,255,255,.3)">ESC o I para cerrar</div>
 </div>
+
+<div id="notesPanel"></div>
 
 <div id="deck">
 
@@ -132,6 +369,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
   <div class="eyebrow anim" data-step="0">Capacitación en cuatro sesiones</div>
   <h1 class="htitle anim" data-step="1" style="font-size:60px">Inteligencia Artificial,<br><b>explicada sin tecnicismos</b></h1>
   <p class="sub anim" data-step="2" style="max-width:600px">Un recorrido pensado para quien decide y coordina equipos, no para quien programa. Cada concepto se entiende con una comparación de la vida y el trabajo diario, sin una sola línea de código.</p>
+  <aside class="notes"><p>Tecla N: abre y cierra estas notas. Aquí queda el guion completo de cada diapositiva, para que la pantalla muestre poco texto y usted no pierda nada.</p><p>Casi todas las diapositivas tienen un ejercicio: invite al público a decirle qué botón tocar.</p></aside>
 </section>
 
 <section class="slide" id="s2" data-title="Las cuatro sesiones">
@@ -144,109 +382,116 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
     <div class="col card"><div class="tag tag-pink">Sesión 4</div><h4 style="margin-top:12px;font-size:17px">Personalizar y decidir</h4><p style="font-size:14px;color:var(--muted);margin-top:7px;line-height:1.5">Formas de especializarla, sus costos y los riesgos que hay que gobernar.</p></div>
   </div>
   <div class="insight anim" data-step="3">Cada sesión dura entre 60 y 90 minutos e incluye un ejercicio en vivo — el objetivo no es memorizar términos, es construir un criterio propio.</div>
+  <aside class="notes"><p>Cada sesión dura entre 60 y 90 minutos e incluye un ejercicio en vivo.</p></aside>
 </section>
 
 <section class="slide" id="s3" data-title="Sesión 1 · Qué hace la IA">
-  <div class="tag tag-coral anim" data-step="0">Sesión 1 · Fundamentos</div>
+  <div class="tag tag-coral anim" data-step="0">Sesión 1 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">No "sabe" cosas.<br>Es un <b>excelente adivinador</b></h2>
-  <p class="sub anim" data-step="2">Piense en la función de autocompletado del teclado de su celular, pero llevada a un nivel extremo: fue entrenada leyendo una fracción enorme de todo lo escrito en internet, y su única tarea es predecir cuál es la palabra más probable que sigue, una y otra vez, hasta formar una respuesta completa.</p>
-  <div class="compare anim" data-step="3">
-    <div class="cbox no"><h4>No es esto</h4>
-      <li>Una base de datos que "busca" la respuesta correcta</li>
-      <li>Alguien razonando paso a paso como una persona</li>
-    </div>
-    <div class="cbox yes"><h4>Es esto</h4>
-      <li>Un motor de predicción entrenado con muchísimo texto</li>
-      <li>Convincente por estadística, no por certeza</li>
-    </div>
+  <p class="sub anim" data-step="2" style="max-width:820px">Como el autocompletado de su celular, llevado al extremo: en cada paso solo elige <b>la palabra más probable</b> que sigue. Arme la frase usted mismo.</p>
+  <div class="pred anim" data-step="3">
+    <div class="pred-sentence"><span>El cliente pidió una reunión</span><span id="predWords"></span><span class="pred-caret"></span></div>
+    <div class="pred-label">¿Qué palabra sigue? La IA calcula estas probabilidades:</div>
+    <div class="pred-opts" id="predOpts"></div>
+    <div class="pred-actions"><button class="ibtn" onclick="predAuto()">🤖 Dejar que la IA elija</button><button class="ibtn ghost" onclick="predReset()">Empezar de nuevo</button></div>
   </div>
+  <div class="insight anim" data-step="4">No verifica si es verdad: elige lo más probable. Suena convincente por estadística, no por certeza.</div>
+  <aside class="notes"><p>Fue entrenada leyendo una fracción enorme de todo lo escrito en internet, y su única tarea es predecir cuál es la palabra más probable que sigue, una y otra vez, hasta formar una respuesta completa.</p><p>No es una base de datos que "busca" la respuesta correcta, ni alguien razonando paso a paso como una persona. Es un motor de predicción entrenado con muchísimo texto.</p><p>Dinámica: pida al público que elija palabras. Luego use "Dejar que la IA elija": siempre toma la de mayor probabilidad. Las probabilidades son ilustrativas.</p></aside>
 </section>
 
 <section class="slide" id="s4" data-title="Sesión 1 · Qué es un token">
-  <div class="tag tag-coral anim" data-step="0">Sesión 1 · Fundamentos</div>
+  <div class="tag tag-coral anim" data-step="0">Sesión 1 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">El <b>token</b>: la ficha con la que juega</h2>
-  <p class="sub anim" data-step="2">Nosotros tampoco procesamos letra por letra sin contexto: la letra "A" sola no le dice nada, pero dentro de "Área" o de "S.A." cambia completamente de función y de peso. Nuestro cerebro agrupa letras en unidades con sentido según lo que las rodea. La IA hace algo parecido pero mecánico: corta el texto en pedazos — ni letras sueltas ni siempre palabras completas — llamados tokens.</p>
-  <div class="row anim" data-step="3" style="margin-top:8px;align-items:center">
-    <div class="col card" style="text-align:center">
-      <div style="font-size:13px;color:var(--muted);margin-bottom:10px">La frase "reunión de directorio"</div>
-      <span class="chip">reuni</span><span class="chip">ón</span><span class="chip">de</span><span class="chip">direc</span><span class="chip">torio</span>
-      <div style="font-size:12.5px;color:var(--muted);margin-top:12px">= 5 fichas (tokens), no 3 palabras</div>
-    </div>
-    <div class="col card">
-      <div style="font-size:15px;line-height:1.6"><b>¿Por qué le importa a usted?</b><br><span style="color:var(--muted);font-size:14px">Muchas herramientas de IA cobran o limitan por cantidad de fichas procesadas — es la unidad real detrás de "cuánto cuesta" o "cuánto puede leer" una IA en un momento dado.</span></div>
-    </div>
+  <p class="sub anim" data-step="2" style="max-width:820px">La IA no lee letra por letra ni siempre palabras completas: corta el texto en pedazos llamados <b>tokens</b>. Escriba una frase y vea cómo se corta.</p>
+  <div class="tok card anim" data-step="3">
+    <input id="tokIn" class="tok-in" value="reunión de directorio" oninput="tokRender()" placeholder="Escriba una frase…" autocomplete="off">
+    <div class="tok-ex">Pruebe: <button onclick="tokSet(this)">reunión de directorio</button><button onclick="tokSet(this)">presupuesto trimestral 2026</button><button onclick="tokSet(this)">Área de talento humano</button><button onclick="tokSet(this)">S.A.</button></div>
+    <div class="tok-out" id="tokOut"></div>
+    <div class="tok-count"><div><b id="tokW">0</b>palabras</div><div style="font-size:22px">→</div><div><b class="t" id="tokT">0</b>fichas (tokens)</div><div class="hint" style="margin-left:auto">Simulación simplificada: el corte real cambia según el modelo.</div></div>
   </div>
-  <div class="anim" data-step="4" style="width:100%;margin-top:6px">
-    <div class="card" style="display:flex;align-items:center;gap:16px;padding:16px 20px">
-      <div style="font-size:26px">🔎</div>
-      <div style="font-size:14px;color:var(--muted);line-height:1.5"><b style="color:var(--ink)">Ejercicio en vivo:</b> abran juntos <a href="https://www.claudetokenizer.com/" target="_blank" style="color:var(--coral);font-weight:700">claudetokenizer.com</a> y prueben con una frase real de su equipo — verán en qué fichas se parte, y cómo cambia según el contexto de la palabra.</div>
-    </div>
+  <div class="row anim" data-step="4" style="margin-top:12px;max-width:900px">
+    <div class="col card" style="padding:14px 18px;font-size:14px;color:var(--muted);line-height:1.5"><b style="color:var(--ink)">¿Por qué le importa?</b> Las herramientas cobran y limitan por fichas: es la unidad real de "cuánto cuesta" y "cuánto puede leer".</div>
+    <div class="col card" style="padding:14px 18px;font-size:14px;color:var(--muted);line-height:1.5"><b style="color:var(--ink)">🔎 En vivo:</b> prueben una frase real en <a href="https://www.claudetokenizer.com/" target="_blank" style="color:var(--coral);font-weight:700">claudetokenizer.com</a> y comparen con esta simulación.</div>
   </div>
+  <aside class="notes"><p>Nosotros tampoco procesamos letra por letra sin contexto: la letra "A" sola no dice nada, pero dentro de "Área" o de "S.A." cambia de función y de peso. Nuestro cerebro agrupa letras en unidades con sentido.</p><p>La IA hace algo parecido pero mecánico: corta el texto en pedazos — ni letras sueltas ni siempre palabras completas — llamados tokens.</p><p>Muestre "S.A.": 4 caracteres visibles, 4 fichas — los signos también cuentan. Luego pida una frase del público.</p></aside>
 </section>
 
 <section class="slide" id="s5" data-title="Sesión 1 · El contexto se acumula">
-  <div class="tag tag-coral anim" data-step="0">Sesión 1 · Fundamentos</div>
+  <div class="tag tag-coral anim" data-step="0">Sesión 1 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">Cada mensaje <b>se suma</b>, no se aprende</h2>
-  <p class="sub anim" data-step="2" style="margin-bottom:4px">El prompt es la instrucción de este momento. El contexto es la caja donde se va guardando todo lo dicho en la conversación: cada mensaje nuevo entra dentro de la caja anterior, sin borrar la de adentro — pero es una caja de esta conversación, no un recuerdo permanente de usted como persona.</p>
-  <div class="row anim" data-step="3" style="align-items:center;gap:26px;margin-top:8px">
-    <div class="col" style="flex:0 0 380px;display:flex;justify-content:center">
-      <div class="nest" style="width:340px;height:230px;background:var(--coral-lt);border-color:var(--coral)">
-        <div class="nestlabel" style="color:#B8330E">Mensaje 3</div>
-        <div class="nest" style="width:250px;height:150px;margin-top:26px;background:var(--gold-lt);border-color:var(--gold)">
-          <div class="nestlabel" style="color:#5B21B6">Mensaje 2</div>
-          <div class="nestcore" style="margin-top:26px">Mensaje 1</div>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card" style="margin-bottom:10px"><b style="font-size:15px">Lo que SÍ pasa</b><p style="font-size:14px;color:var(--muted);margin-top:6px;line-height:1.5">Cada mensaje se apila dentro de la misma caja (el contexto de esta conversación) para que la IA responda coherente con todo lo dicho hasta ahora.</p></div>
-      <div class="card"><b style="font-size:15px">Lo que NO pasa</b><p style="font-size:14px;color:var(--muted);margin-top:6px;line-height:1.5">La IA no guarda esa caja como conocimiento suyo para siempre, ni "aprende" datos de usted como persona — al cerrar la conversación, esa caja específica desaparece.</p></div>
+  <p class="sub anim" data-step="2" style="max-width:860px">Cada mensaje nuevo entra en la misma caja, encima de lo anterior. Y cada vez que responde, la IA <b>vuelve a leer toda la caja</b>.</p>
+  <div class="acc anim" data-step="3">
+    <div class="acc-stage" id="accStage"></div>
+    <div class="acc-ctrl">
+      <button class="ibtn" id="accSend" onclick="accSend()">💬 Enviar mensaje</button>
+      <button class="ibtn ghost" onclick="accClose()">✖ Cerrar conversación</button>
+      <div class="acc-stat"><b id="accN">0</b><small>mensajes que la IA relee antes de cada respuesta</small></div>
+      <div class="acc-msg" id="accMsg"></div>
     </div>
   </div>
+  <aside class="notes"><p>El prompt es la instrucción de este momento. El contexto es la caja donde se guarda todo lo dicho en la conversación: cada mensaje nuevo entra dentro de la caja anterior, sin borrar la de adentro.</p><p>Lo que SÍ pasa: cada mensaje se apila en la misma caja para que la IA responda coherente con todo lo dicho.</p><p>Lo que NO pasa: la IA no guarda esa caja como conocimiento suyo para siempre ni "aprende" datos de usted. Al cerrar la conversación, esa caja desaparece — muéstrelo con el botón "Cerrar conversación".</p></aside>
 </section>
 
 <section class="slide" id="s6" data-title="Sesión 1 · Ventana de contexto — ejercicio">
   <div class="tag tag-coral anim" data-step="0">Sesión 1 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">La caja <b>tiene un límite</b></h2>
-  <p class="sub anim" data-step="2" style="margin-bottom:8px">Esa caja (la ventana de contexto) no es infinita — en este ejemplo, solo caben <b>4 elementos a la vez</b>. Haga clic en cada uno para agregarlo: al llegar al quinto, el primero que entró se cae para hacerle espacio.</p>
-  <div class="row anim" data-step="3" style="gap:24px;align-items:flex-start">
-    <div class="col" style="flex:0 0 240px">
-      <div class="chip" onclick="addToDesk(this)">📄 Instrucción inicial</div>
-      <div class="chip" onclick="addToDesk(this)">📊 Reporte adjunto</div>
-      <div class="chip" onclick="addToDesk(this)">💬 Pregunta 1</div>
-      <div class="chip" onclick="addToDesk(this)">💬 Pregunta 2</div>
-      <div class="chip" onclick="addToDesk(this)">💬 Pregunta 3</div>
-      <div class="chip" onclick="addToDesk(this)">📎 Otro documento</div>
+  <p class="sub anim" data-step="2" style="margin-bottom:10px;max-width:900px">Esa caja (la ventana de contexto) no es infinita — en este ejemplo, solo caben <b>5 elementos a la vez</b>. Arrastre los elementos a la caja: cuando llegue el sexto, el primero que entró se sale para hacerle espacio.</p>
+  <div class="anim" data-step="3" style="width:100%">
+    <div class="ctx-bank" id="ctxBank">
+      <div class="ctx-item" draggable="true" data-id="0" data-ico="📄" data-label="Instrucción inicial">📄 Instrucción inicial</div>
+      <div class="ctx-item" draggable="true" data-id="1" data-ico="📊" data-label="Reporte adjunto">📊 Reporte adjunto</div>
+      <div class="ctx-item" draggable="true" data-id="2" data-ico="💬" data-label="Pregunta 1">💬 Pregunta 1</div>
+      <div class="ctx-item" draggable="true" data-id="3" data-ico="🧾" data-label="Política interna">🧾 Política interna</div>
+      <div class="ctx-item" draggable="true" data-id="4" data-ico="💬" data-label="Pregunta 2">💬 Pregunta 2</div>
+      <div class="ctx-item" draggable="true" data-id="5" data-ico="📧" data-label="Correo del cliente">📧 Correo del cliente</div>
+      <div class="ctx-item" draggable="true" data-id="6" data-ico="📎" data-label="Otro documento">📎 Otro documento</div>
+      <div class="ctx-item" draggable="true" data-id="7" data-ico="🖼️" data-label="Captura de pantalla">🖼️ Captura de pantalla</div>
+      <div class="ctx-item" draggable="true" data-id="8" data-ico="💬" data-label="Pregunta 3">💬 Pregunta 3</div>
+      <div class="ctx-item" draggable="true" data-id="9" data-ico="📝" data-label="Acta de reunión">📝 Acta de reunión</div>
     </div>
-    <div class="col">
-      <div class="deskbox" id="desk"></div>
-      <div id="deskmsg" style="font-size:14px;color:var(--coral);margin-top:8px;font-weight:700;min-height:18px"></div>
+    <div class="ctx-wrap">
+      <div class="ctx-side"><span>⬅</span>Se olvida</div>
+      <div class="ctx-box" id="ctxBox">
+        <div class="ctx-slot" data-n="1"></div><div class="ctx-slot" data-n="2"></div><div class="ctx-slot" data-n="3"></div><div class="ctx-slot" data-n="4"></div><div class="ctx-slot" data-n="5"></div>
+      </div>
+      <div class="ctx-side"><span>⬅</span>Entra</div>
+    </div>
+    <div class="ctx-bar">
+      <div class="ctx-meter" id="ctxMeter">Caja: 0 / 5</div>
+      <div class="ctx-msg" id="ctxMsg"></div>
+      <button class="ctx-reset" onclick="ctxReset()">Vaciar caja</button>
     </div>
   </div>
   <div class="insight anim" data-step="4">Por eso una conversación muy larga "se le olvida" el inicio: no es mala memoria, es que la caja ya no tiene espacio.</div>
+  <aside class="notes"><p>Arrastre elementos a la caja (o doble clic). Al llegar el sexto, el primero sale y queda marcado en rojo en la lista: se puede volver a arrastrar, igual que en la vida real hay que repetirle a la IA lo que olvidó.</p><p>En las herramientas reales la caja es mucho más grande, pero el principio es el mismo.</p></aside>
 </section>
 
 <section class="slide dark" id="s7" data-title="Sesión 2 · La IA no aprende de usted">
-  <div class="tag tag-teal anim" data-step="0">Sesión 2 · Memoria y errores</div>
+  <div class="tag tag-teal anim" data-step="0">Sesión 2 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">La IA <b>no aprende</b> de su conversación</h2>
-  <p class="sub anim" data-step="2">Este es el malentendido más común. El modelo detrás de la IA no cambia ni un poco por lo que usted le cuenta hoy — es como hablar con un experto que tiene el conocimiento congelado desde el día en que terminó su formación. Entonces, ¿qué es esa "memoria" que algunas herramientas ofrecen? Es simple: <b>es la herramienta, no el modelo</b>, la que guarda un resumen corto de la conversación en un espacio propio de su cuenta — y se lo vuelve a mostrar al modelo la próxima vez, como quien le entrega una hoja de apuntes a un experto nuevo antes de empezar.</p>
-  <div class="compare anim" data-step="3">
-    <div class="cbox no"><h4>Lo que no pasa</h4>
-      <li>El modelo "graba" lo que usted le dijo dentro de sí mismo</li>
-      <li>Ese conocimiento se mezcla con el de otros usuarios</li>
+  <p class="sub anim" data-step="2" style="max-width:880px">El modelo tiene el conocimiento congelado. La "memoria" que ofrecen algunas herramientas la guarda <b>la herramienta</b>, no el modelo. Encienda y apague la memoria, y abra la conversación del martes.</p>
+  <div class="mem anim" data-step="3">
+    <div class="mem-col">
+      <div class="mem-day">Lunes</div>
+      <div class="bub user">Prefiero que mis correos sean formales.</div>
+      <div class="bub ai">Entendido.</div>
     </div>
-    <div class="cbox yes"><h4>Lo que sí pasa</h4>
-      <li>La herramienta guarda un resumen en un espacio propio de su cuenta</li>
-      <li>Sin ese resumen guardado aparte, cada conversación empieza de cero</li>
+    <div class="mem-mid">
+      <div class="mem-model">🧠<b>Modelo de IA</b><small>🔒 Conocimiento congelado</small><span class="mem-stamp" id="memStamp">Sin cambios</span></div>
+      <label class="mem-switch"><input type="checkbox" id="memOn" onchange="memToggle()"><span class="sw"></span><span id="memLbl">Memoria de la herramienta: APAGADA</span></label>
+      <div class="mem-note" id="memNote">📒 Libreta de su cuenta<br><small>"Prefiere correos formales"</small></div>
+      <button class="ibtn" onclick="memRun()">Abrir conversación del martes ▶</button>
     </div>
+    <div class="mem-col" id="memTue"><div class="mem-day">Martes · conversación nueva</div><div class="mem-empty">Aún no empieza</div></div>
   </div>
-  <div class="insight anim" data-step="4">Ese resumen queda dentro de la herramienta que su empresa aprobó, bajo sus políticas de seguridad — no es que el modelo de IA "se quede" con su información ni la use para entrenar a otros usuarios.</div>
+  <div class="insight anim" data-step="4" style="background:rgba(0,163,136,.18);color:#8FE9D3">Esa libreta vive en su cuenta, dentro de la herramienta que la empresa aprobó. El modelo no se queda con su información ni la usa para otros usuarios.</div>
+  <aside class="notes"><p>Este es el malentendido más común. El modelo no cambia ni un poco por lo que usted le cuenta hoy: es como hablar con un experto que tiene el conocimiento congelado desde que terminó su formación.</p><p>La "memoria" es de la herramienta: guarda un resumen corto en un espacio propio de su cuenta y se lo vuelve a mostrar al modelo la próxima vez, como quien le entrega una hoja de apuntes a un experto nuevo antes de empezar.</p><p>Dinámica: primero con la memoria APAGADA (la IA pregunta de nuevo). Luego ENCENDIDA (la nota viaja al modelo). Señale que el cerebro dice "Sin cambios" las dos veces.</p></aside>
 </section>
 
 <section class="slide" id="s8" data-title="Sesión 2 · Alucinación — ejercicio">
   <div class="tag tag-teal anim" data-step="0">Sesión 2 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">Cuando <b>inventa con total seguridad</b></h2>
-  <p class="sub anim" data-step="2">Como la IA solo predice qué palabra sigue, a veces "rellena" un vacío de información con algo que suena correcto pero es falso — sin ninguna señal de duda en el tono. A esto se le llama alucinación. Es como un colaborador que, para no quedar mal en una reunión, responde con seguridad una cifra que en realidad no verificó.</p>
+  <p class="sub anim" data-step="2" style="max-width:800px">A veces la IA rellena un vacío con algo que suena correcto pero es falso, <b>sin ninguna duda en el tono</b>. Eso es una alucinación.</p>
   <div class="anim" data-step="3" style="width:100%;max-width:680px">
     <div style="font-size:15px;color:var(--ink);font-weight:700;margin-bottom:4px">Pregunta: usted NO le compartió a la IA ningún dato del cliente. ¿Cuál de estas 3 respuestas es la inventada?</div>
     <div style="font-size:13px;color:var(--muted);margin-bottom:12px">Pista: la alucinación suena igual de segura que las demás — pero da un dato exacto que nadie le dio.</div>
@@ -255,128 +500,166 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
     <button class="quizbtn" data-correct="false" onclick="checkQuiz(this)">C) "Puedo ayudarle a redactar el correo de seguimiento, pero antes dígame qué le quiere comunicar al cliente."</button>
     <div class="quizfb" id="qfb"></div>
   </div>
+  <aside class="notes"><p>Como la IA solo predice qué palabra sigue, a veces "rellena" un vacío de información con algo que suena correcto pero es falso.</p><p>Es como un colaborador que, para no quedar mal en una reunión, responde con seguridad una cifra que en realidad no verificó.</p></aside>
 </section>
 
 <section class="slide" id="s9" data-title="Sesión 3 · Alimentar con contexto">
-  <div class="tag tag-gold anim" data-step="0">Sesión 3 · Cómo se extiende la IA</div>
+  <div class="tag tag-gold anim" data-step="0">Sesión 3 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">No sabe nada de su empresa — <b>hasta que usted se lo da</b></h2>
-  <p class="sub anim" data-step="2">Retomando la sesión 1: el contexto es la "caja" de esa conversación. El modelo por sí solo conoce lo que aprendió en su entrenamiento general — nada de los documentos internos de su empresa. Pero esa caja se puede alimentar deliberadamente con distintos tipos de contexto.</p>
-  <div class="row anim" data-step="3">
-    <div class="col card"><div class="tag tag-teal">Contexto manual</div><p style="font-size:14px;margin-top:10px;color:var(--muted);line-height:1.5">Usted mismo pega o adjunta el documento en la conversación.</p></div>
-    <div class="col card"><div class="tag tag-gold">Contexto por búsqueda</div><p style="font-size:14px;margin-top:10px;color:var(--muted);line-height:1.5">El sistema busca solo el fragmento relevante entre los documentos de la organización, y se lo entrega a la IA.</p></div>
-    <div class="col card"><div class="tag tag-pink">Contexto persistente ("la libreta")</div><p style="font-size:14px;margin-top:10px;color:var(--muted);line-height:1.5"><b>Ejemplo:</b> ayer le pidió que sus correos fueran formales; hoy ya lo hace sin que usted lo repita, porque la herramienta guardó esa nota en su cuenta y se la vuelve a mostrar cada vez.</p></div>
+  <p class="sub anim" data-step="2" style="max-width:860px">Encienda cada fuente de contexto y vea cómo cambia la respuesta a <b>la misma pregunta</b>.</p>
+  <div class="src anim" data-step="3">
+    <div class="src-togs">
+      <button class="src-tog" data-k="manual" onclick="srcToggle(this)"><span class="sw"></span><span><b>📎 Contexto manual</b><small>Usted adjunta el documento</small></span></button>
+      <button class="src-tog" data-k="busq" onclick="srcToggle(this)"><span class="sw"></span><span><b>🔎 Contexto por búsqueda</b><small>El sistema encuentra el fragmento exacto</small></span></button>
+      <button class="src-tog" data-k="lib" onclick="srcToggle(this)"><span class="sw"></span><span><b>📒 Contexto persistente</b><small>La libreta con sus preferencias</small></span></button>
+    </div>
+    <div class="src-main">
+      <div class="src-q">❓ "¿Cuál es el plazo para que un cliente devuelva un producto?"</div>
+      <div class="src-box">Lo que la IA ve en la caja: <span id="srcChips"></span></div>
+      <div class="src-ans" id="srcAns"><div class="src-tag" id="srcTag"></div><div class="src-txt" id="srcTxt"></div></div>
+      <div class="hint">Ejemplo ilustrativo.</div>
+    </div>
   </div>
-  <div class="insight anim" data-step="4">Es la diferencia entre preguntarle a un consultor externo genérico y a uno que primero abrió su carpeta de casos. Y sobre la seguridad: esa "libreta" vive dentro de su cuenta, en la herramienta que la empresa aprobó — no es que el modelo de IA se está quedando con su información ni la comparte con otros usuarios.</div>
+  <div class="insight anim" data-step="4">Es la diferencia entre un consultor externo genérico y uno que primero abrió su carpeta de casos.</div>
+  <aside class="notes"><p>Retomando la sesión 1: el contexto es la "caja" de la conversación. El modelo por sí solo conoce lo general de su entrenamiento, nada de los documentos internos de su empresa.</p><p>Manual: usted pega o adjunta el documento. Por búsqueda: el sistema busca solo el fragmento relevante entre los documentos de la organización. Persistente ("la libreta"): la herramienta guarda preferencias en su cuenta, por ejemplo que prefiere viñetas.</p><p>Seguridad: esa libreta vive en su cuenta, en la herramienta aprobada. El modelo no se queda con su información ni la comparte.</p></aside>
 </section>
 
 <section class="slide" id="s10" data-title="Sesión 3 · MCP">
-  <div class="tag tag-gold anim" data-step="0">Sesión 3 · Cómo se extiende la IA</div>
+  <div class="tag tag-gold anim" data-step="0">Sesión 3 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">El <b>adaptador universal de viaje</b></h2>
-  <p class="sub anim" data-step="2">Cuando usted viaja a otro país, no compra un cargador distinto para cada enchufe — compra un adaptador universal y ya se conecta a todo. Existe un estándar equivalente para que una IA se conecte a distintos sistemas de la empresa sin construir cada conexión a mano y por separado. Ese estándar tiene un nombre: <b>MCP</b>. No necesita memorizar qué significa la sigla — solo reconocer que, cuando alguien lo mencione, se refiere exactamente a este adaptador.</p>
-  <div class="anim" data-step="3" style="display:flex;align-items:center;justify-content:center;gap:0;width:100%;margin-top:10px">
-    <div class="card" style="text-align:center;padding:24px 28px;font-weight:800;font-size:16px">IA</div>
-    <div style="width:60px;height:3px;background:var(--gold)"></div>
-    <div class="card" style="text-align:center;padding:16px 20px;background:var(--gold-lt);border-color:var(--gold)"><b>MCP</b><br><span style="font-size:12.5px;color:var(--muted)">el adaptador — estándar común</span></div>
-    <div style="width:60px;height:3px;background:var(--gold)"></div>
-    <div style="display:flex;flex-direction:column;gap:9px">
-      <div class="card" style="padding:9px 16px;font-size:14px">📅 Calendario</div>
-      <div class="card" style="padding:9px 16px;font-size:14px">🗂️ Sistema de tickets</div>
-      <div class="card" style="padding:9px 16px;font-size:14px">📁 Repositorio de documentos</div>
+  <p class="sub anim" data-step="2" style="max-width:860px">Un solo estándar para conectar la IA a todos los sistemas de la empresa. Ese estándar se llama <b>MCP</b>. Compare y agregue sistemas:</p>
+  <div class="mcp anim" data-step="3">
+    <div class="mcp-bar">
+      <div class="seg"><button id="mcpOff" class="on" onclick="mcpSet(false)">Sin estándar</button><button id="mcpOnB" onclick="mcpSet(true)">Con MCP</button></div>
+      <button class="ibtn" onclick="mcpAdd()">＋ Agregar sistema</button>
+      <button class="ibtn ghost" onclick="mcpReset()">Reiniciar</button>
+      <div class="mcp-count" id="mcpCount"></div>
     </div>
+    <svg class="mcp-svg" id="mcpSvg" viewBox="0 0 1000 290" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="mcp-msg" id="mcpMsg"></div>
   </div>
-  <div class="insight anim" data-step="4">La próxima vez que escuche "MCP" en una reunión, ya sabe que están hablando de este adaptador — no de una herramienta más, sino del conector que hace posible que la IA use todas las demás.</div>
+  <div class="insight anim" data-step="4">Cuando escuche "MCP" en una reunión: es este adaptador, el conector que permite que la IA use las demás herramientas.</div>
+  <aside class="notes"><p>Cuando viaja a otro país no compra un cargador distinto para cada enchufe: compra un adaptador universal. MCP es el equivalente para que una IA se conecte a distintos sistemas sin construir cada conexión a mano y por separado.</p><p>No hace falta memorizar la sigla: basta con reconocer que se refiere a este adaptador.</p><p>Dinámica: agregue sistemas "Sin estándar" (cada uno suma una conexión distinta) y luego cambie a "Con MCP".</p></aside>
 </section>
 
 <section class="slide" id="s11" data-title="Sesión 3 · Prompt vs. skill">
-  <div class="tag tag-pink anim" data-step="0">Sesión 3 · Cómo se extiende la IA</div>
+  <div class="tag tag-pink anim" data-step="0">Sesión 3 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">Prompt improvisado <b>vs. receta guardada</b></h2>
-  <div class="row anim" data-step="2" style="gap:20px;align-items:stretch">
-    <div class="tile" style="flex:1">
-      <div class="ico">✍️</div>
-      <h5>Prompt</h5>
-      <p>Una instrucción que usted escribe cada vez, de cero, para una tarea puntual. Si mañana la vuelve a necesitar, la vuelve a redactar.</p>
+  <p class="sub anim" data-step="2" style="max-width:880px">Un <b>prompt</b> se escribe cada vez. Un <b>skill</b> es ese procedimiento escrito una vez, probado y guardado. Simule una semana de trabajo:</p>
+  <div class="sk anim" data-step="3">
+    <div class="sk-bar">
+      <button class="ibtn" id="skBtn" onclick="skStep()">✍️ Escribir la instrucción (Lunes)</button>
+      <button class="ibtn gold pulse" id="skPack" onclick="skPack()" style="display:none">📦 Empaquetar como skill</button>
+      <div class="sk-banner" id="skBanner">📦 Skill "Reporte semanal" guardado</div>
+      <button class="ibtn ghost" onclick="skReset()">Reiniciar</button>
+      <div class="sk-stats"><div><b id="skMin">0</b>min redactando</div><div><b id="skFmt">0</b>resultados distintos</div></div>
     </div>
-    <div style="display:flex;align-items:center;font-size:30px;color:var(--muted)">→</div>
-    <div class="tile" style="flex:1;border-color:var(--gold);background:var(--gold-lt)">
-      <div class="ico">📦</div>
-      <h5>Skill</h5>
-      <p>Ese mismo procedimiento, ya escrito, probado y empaquetado una sola vez — listo para usarse cuantas veces haga falta, igual todas las veces.</p>
-    </div>
+    <div class="sk-track" id="skTrack"></div>
+    <div class="sk-msg" id="skMsg"></div>
   </div>
-  <div class="insight anim" data-step="3">Analogía simple: el prompt es improvisar la receta cada vez que cocina; el skill es la receta ya escrita, guardada en la carpeta de la cocina, lista para seguir sin pensarla de nuevo.</div>
-  <div class="anim" data-step="4" style="width:100%;margin-top:10px">
-    <div style="font-size:13px;color:var(--muted);margin-bottom:8px;font-weight:600">Ejemplos de skills que un equipo podría empaquetar:</div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px">
-      <div class="chip">📊 Presentación estandarizada de resultados</div>
-      <div class="chip">📝 Minuta de reunión con compromisos</div>
+  <div class="insight anim" data-step="4">¿Cuándo empaquetarlo? Cuando nota que escribe la misma instrucción, con la misma estructura, una y otra vez.</div>
+  <div class="anim" data-step="5" style="width:100%;margin-top:10px">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:6px;font-weight:600">Ejemplos de skills que un equipo podría empaquetar:</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      <div class="chip">📊 Presentación de resultados</div>
+      <div class="chip">📝 Minuta con compromisos</div>
       <div class="chip">📅 Reporte de estado semanal</div>
       <div class="chip">💰 Estimación de presupuesto</div>
-      <div class="chip">📩 Respuesta a solicitud de propuesta (RFP)</div>
+      <div class="chip">📩 Respuesta a una RFP</div>
       <div class="chip">📋 Checklist de cierre de un caso</div>
     </div>
   </div>
+  <aside class="notes"><p>Analogía: el prompt es improvisar la receta cada vez que cocina; el skill es la receta ya escrita, guardada en la carpeta de la cocina, lista para seguir sin pensarla de nuevo.</p><p>Dinámica: escriba la instrucción lunes, martes y miércoles. Muestre que cada vez sale un formato distinto y se suman minutos. Al aparecer el botón, empaquete y use el skill el jueves y el viernes.</p><p>Ventaja de negocio: consistencia entre personas del equipo, menos tiempo redactando lo mismo y control sobre cómo se hace esa tarea.</p></aside>
 </section>
 
-<section class="slide" id="s12" data-title="Sesión 3 · Cuándo un prompt se vuelve skill">
-  <div class="tag tag-pink anim" data-step="0">Sesión 3 · Cómo se extiende la IA</div>
-  <h2 class="htitle anim" data-step="1">¿Cuándo conviene <b>empaquetarlo</b>?</h2>
-  <p class="sub anim" data-step="2" style="margin-bottom:6px">Cuando nota que está escribiendo la misma instrucción, con la misma estructura, una y otra vez — ahí es momento de convertirla en un skill.</p>
-  <div class="row anim" data-step="3" style="align-items:center;gap:10px">
-    <div class="tile" style="flex:1"><div class="ico">✍️</div><p style="font-weight:700;color:var(--ink)">Lunes</p><p>"Resume las novedades del proyecto para el comité..."</p></div>
-    <div class="tile" style="flex:1"><div class="ico">✍️</div><p style="font-weight:700;color:var(--ink)">Miércoles</p><p>Casi la misma instrucción, reescrita de nuevo</p></div>
-    <div class="tile" style="flex:1"><div class="ico">✍️</div><p style="font-weight:700;color:var(--ink)">Viernes</p><p>Otra vez, con pequeños cambios</p></div>
-    <div style="font-size:26px;color:var(--muted)">→</div>
-    <div class="tile" style="flex:1;border-color:var(--gold);background:var(--gold-lt)"><div class="ico">📦</div><p style="font-weight:800;color:#5B21B6">Skill "Reporte semanal"</p><p>Un solo procedimiento fijo, mismo resultado consistente, cualquiera del equipo lo usa igual.</p></div>
-  </div>
-  <div class="insight anim" data-step="4">Ventaja de negocio: consistencia entre personas del equipo, menos tiempo redactando lo mismo, y control sobre cómo se hace esa tarea.</div>
-</section>
+
 
 <section class="slide dark" id="s13" data-title="Sesión 3 · Qué es un agente">
-  <div class="tag tag-pink anim" data-step="0">Sesión 3 · Cómo se extiende la IA</div>
+  <div class="tag tag-pink anim" data-step="0">Sesión 3 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">El agente: <b>quien decide qué receta usar</b></h2>
-  <p class="sub anim" data-step="2">Un agente es una IA a la que se le da un objetivo — no una receta puntual — y ella misma decide cuál de sus skills usar, en qué orden, y las ejecuta. Pero un agente puede ir un paso más allá: si la tarea lo requiere, puede <b>llamar a otro agente especializado</b> para que resuelva su parte, igual que un jefe de equipo que deriva un tema a otro equipo experto.</p>
-  <div class="anim" data-step="3" style="display:flex;align-items:center;justify-content:center;gap:30px;width:100%;margin-top:12px">
-    <div class="hub">Agente de<br>Atención</div>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <div style="display:flex;align-items:center;gap:8px"><div class="spoke"></div><div class="tile" style="padding:10px 14px;flex-direction:row;gap:8px"><span style="font-size:18px">📦</span><span style="font-size:12.5px;font-weight:700">Skill: redactar respuesta</span></div></div>
-      <div style="display:flex;align-items:center;gap:8px"><div class="spoke"></div><div class="tile" style="padding:10px 14px;flex-direction:row;gap:8px"><span style="font-size:18px">📦</span><span style="font-size:12.5px;font-weight:700">Skill: consultar historial</span></div></div>
-      <div style="display:flex;align-items:center;gap:8px"><div class="spoke" style="background:var(--pink)"></div><div class="hub sub">Agente<br>Legal</div></div>
+  <p class="sub anim" data-step="2" style="max-width:880px">Recibe un <b>objetivo</b>, decide qué skills usar y, si hace falta, le pasa una parte a <b>otro agente especializado</b>. Elija un caso:</p>
+  <div class="ag idle anim" data-step="3" id="agRoot">
+    <div class="ag-cases">
+      <button class="ag-case" onclick="agRun(0,this)">📦 "Mi pedido llegó tarde"</button>
+      <button class="ag-case" onclick="agRun(1,this)">⚖️ "Exijo la penalidad del contrato por el retraso"</button>
+    </div>
+    <div class="ag-stage">
+      <div class="ag-dia">
+        <div class="hub ag-node" id="agHub">Agente de<br>Atención</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px"><div class="spoke"></div><div class="tile ag-node" id="agN1" style="padding:10px 14px;flex-direction:row;gap:8px"><span style="font-size:18px">📦</span><span style="font-size:12.5px;font-weight:700">Skill: consultar historial</span></div></div>
+          <div style="display:flex;align-items:center;gap:8px"><div class="spoke"></div><div class="tile ag-node" id="agN2" style="padding:10px 14px;flex-direction:row;gap:8px"><span style="font-size:18px">📦</span><span style="font-size:12.5px;font-weight:700">Skill: redactar respuesta</span></div></div>
+          <div style="display:flex;align-items:center;gap:8px"><div class="spoke" id="agSp3" style="background:var(--pink)"></div><div class="hub sub ag-node" id="agN3">Agente<br>Legal</div></div>
+        </div>
+      </div>
+      <div class="ag-log" id="agLog"><div class="ag-empty">Elija un caso para ver cómo decide.</div></div>
     </div>
   </div>
-  <div class="insight anim" data-step="4" style="background:rgba(0,163,136,.18);color:#8FE9D3"><b>Ejemplo:</b> el Agente de Atención recibe un reclamo. Usa sus propias skills para redactar la respuesta y revisar el historial — pero si detecta que el caso implica una cláusula contractual, le pasa esa parte al Agente Legal (especializado en ese tema) antes de responder al cliente.</div>
+  <div class="insight anim" data-step="4" style="background:rgba(0,163,136,.18);color:#8FE9D3">Como un jefe de equipo: resuelve lo suyo y le pasa el tema al experto cuando el caso lo requiere.</div>
+  <aside class="notes"><p>Un agente es una IA a la que se le da un objetivo — no una receta puntual — y ella misma decide cuál de sus skills usar, en qué orden, y las ejecuta.</p><p>Puede ir un paso más allá: si la tarea lo requiere, llama a otro agente especializado, igual que un jefe de equipo que deriva un tema a otro equipo experto.</p><p>Dinámica: primero el reclamo simple (el Agente Legal queda apagado). Luego el que menciona el contrato: se ve cómo le pasa esa parte al Agente Legal.</p></aside>
 </section>
 
 <section class="slide" id="s14" data-title="Sesión 4 · Tres formas de especializar">
-  <div class="tag tag-coral anim" data-step="0">Sesión 4 · Personalizar y decidir</div>
+  <div class="tag tag-coral anim" data-step="0">Sesión 4 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">Tres formas de <b>"capacitar" a la IA</b></h2>
-  <p class="sub anim" data-step="2">Un mismo caso para las tres: quiere que la IA atienda consultas de clientes sobre sus productos. Piense en tres formas distintas de preparar a un empleado nuevo para ese mismo rol — elegir la correcta es una decisión de costo y tiempo, no solo técnica.</p>
-  <div class="row anim" data-step="3">
-    <div class="col card"><div class="tag tag-gold">Darle instrucciones claras</div><p style="font-size:14px;margin-top:10px;color:var(--muted);line-height:1.5"><b>Ej.:</b> "Responde siempre en tono cordial, en menos de 100 palabras, y ofrece escalar a un asesor si el cliente insiste." Rápido y barato — la primera opción a probar siempre.</p></div>
-    <div class="col card"><div class="tag tag-teal">Darle acceso a la carpeta correcta</div><p style="font-size:14px;margin-top:10px;color:var(--muted);line-height:1.5"><b>Ej.:</b> darle el catálogo real de productos y la política vigente de devoluciones, para que responda con datos exactos de la empresa. Lo visto en la sesión anterior.</p></div>
-    <div class="col card"><div class="tag tag-pink">Meses de entrenamiento a la medida</div><p style="font-size:14px;margin-top:10px;color:var(--muted);line-height:1.5"><b>Ej.:</b> entrenarla varios meses con miles de conversaciones reales de soporte, para que replique el estilo exacto de la marca. Solo cuando de verdad se necesita un experto distinto de fábrica.</p></div>
+  <p class="sub anim" data-step="2" style="max-width:880px">Objetivo: que la IA atienda consultas de clientes. Arrastre cada necesidad a la forma de prepararla que corresponde (o haga clic en la necesidad y luego en la columna).</p>
+  <div class="mt anim" data-step="3">
+    <div class="mt-bank" id="mtBank"></div>
+    <div class="mt-zones">
+      <div class="mt-zone" data-k="inst"><div class="tag tag-gold">Darle instrucciones claras</div><div class="mt-drop">Suelte aquí</div><div class="mt-meta"><span>💰 Costo: bajo</span><span>⏱️ Tiempo: minutos</span></div></div>
+      <div class="mt-zone" data-k="carp"><div class="tag tag-teal">Darle acceso a la carpeta correcta</div><div class="mt-drop">Suelte aquí</div><div class="mt-meta"><span>💰 Costo: medio</span><span>⏱️ Tiempo: días</span></div></div>
+      <div class="mt-zone" data-k="entr"><div class="tag tag-pink">Meses de entrenamiento a la medida</div><div class="mt-drop">Suelte aquí</div><div class="mt-meta"><span>💰 Costo: alto</span><span>⏱️ Tiempo: meses</span></div></div>
+    </div>
+    <div class="mt-bar"><div class="mt-msg" id="mtMsg"></div><button class="ibtn ghost" onclick="mtReset()">Reiniciar</button></div>
   </div>
-  <div class="insight anim" data-step="4">Este tercer camino (fine-tuning) existe y tiene nombre técnico, pero casi nunca es la primera opción: es lento, caro y rígido — se recurre a él solo cuando las dos primeras ya no alcanzan.</div>
+  <div class="insight anim" data-step="4">El entrenamiento a la medida (fine-tuning) casi nunca es la primera opción: es lento, caro y rígido.</div>
+  <aside class="notes"><p>Piense en tres formas distintas de preparar a un empleado nuevo para el mismo rol. Elegir la correcta es una decisión de costo y tiempo, no solo técnica.</p><p>Instrucciones claras: "Responde siempre cordial, en menos de 100 palabras, y ofrece escalar a un asesor". Rápido y barato: la primera opción a probar siempre.</p><p>Carpeta correcta: darle el catálogo real y la política vigente de devoluciones (lo visto en la sesión 3).</p><p>Entrenamiento a la medida: varios meses con miles de conversaciones reales para replicar el estilo exacto de la marca. Solo cuando las dos primeras ya no alcanzan.</p></aside>
 </section>
 
 <section class="slide dark" id="s15" data-title="Sesión 4 · Costos y riesgos">
-  <div class="tag tag-teal anim" data-step="0">Sesión 4 · Personalizar y decidir</div>
+  <div class="tag tag-teal anim" data-step="0">Sesión 4 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">Lo que <b>nadie le explica de entrada</b></h2>
-  <div class="row anim" data-step="2">
-    <div class="col card" style="background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)"><h4 style="font-size:15px;margin-bottom:10px;color:#FF9B7D">Sobre el costo</h4><p style="font-size:14px;color:rgba(243,238,228,.75);line-height:1.6">Mientras más grande la "caja" (contexto) que le da a la IA, más tarda y más cuesta cada respuesta.</p></div>
-    <div class="col card" style="background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)"><h4 style="font-size:15px;margin-bottom:10px;color:#FF9B7D">Sobre el riesgo</h4><p style="font-size:14px;color:rgba(243,238,228,.75);line-height:1.6">Nunca comparta información confidencial en una herramienta no aprobada por la organización, y valide siempre antes de actuar — recuerde la sesión 2.</p></div>
+  <p class="sub anim" data-step="2">Mueva los dos controles.</p>
+  <div class="row anim" data-step="3" style="gap:18px">
+    <div class="col cs-card">
+      <h4>Sobre el costo</h4>
+      <div class="cs-q">¿Qué tan grande es la caja (contexto) que le entrega a la IA?</div>
+      <input type="range" min="1" max="5" value="1" class="cs-range" id="csSize" oninput="csRender()" onchange="this.blur()">
+      <div class="cs-val" id="csVal"></div>
+      <div class="cs-row"><span>Tiempo de respuesta</span><div class="cs-bg"><i id="csT"></i></div><span id="csTq"></span></div>
+      <div class="cs-row"><span>Costo por respuesta</span><div class="cs-bg"><i id="csC"></i></div><span id="csCq"></span></div>
+      <div class="hint">Ilustrativo: lo que importa es la relación, no las cifras.</div>
+    </div>
+    <div class="col cs-card">
+      <h4>Sobre el riesgo</h4>
+      <div class="cs-q">¿Qué tan sensible es lo que va a hacer con la respuesta?</div>
+      <input type="range" min="1" max="4" value="1" class="cs-range" id="rkSens" oninput="rkRender()" onchange="this.blur()">
+      <div class="cs-val" id="rkVal"></div>
+      <div class="cs-lvl" id="rkLvl"><span></span><span></span><span></span><span></span></div>
+      <div class="cs-act" id="rkAct"></div>
+      <div class="cs-never">🚫 Siempre, en cualquier nivel: nada confidencial en herramientas no aprobadas por la organización.</div>
+    </div>
   </div>
-  <div class="insight anim" data-step="3" style="background:rgba(0,163,136,.2);color:#8FE9D3">Regla simple para su equipo: entre más importante o sensible la decisión, mayor debe ser la revisión humana antes de ejecutarla.</div>
+  <div class="insight anim" data-step="4" style="background:rgba(0,163,136,.2);color:#8FE9D3">Regla simple para su equipo: entre más importante o sensible la decisión, mayor debe ser la revisión humana antes de ejecutarla.</div>
+  <aside class="notes"><p>Costo: mientras más grande la "caja" que le da a la IA, más tarda y más cuesta cada respuesta. Conecta con los tokens de la sesión 1.</p><p>Riesgo: nunca comparta información confidencial en una herramienta no aprobada, y valide siempre antes de actuar (recuerde la alucinación de la sesión 2).</p></aside>
 </section>
 
 <section class="slide" id="s16" data-title="Cierre · Mapa de decisión">
-  <div class="eyebrow anim" data-step="0">Cierre</div>
-  <h2 class="htitle anim" data-step="1">Antes de usar IA para algo, <b>pregúntese esto</b></h2>
-  <div class="decisiongrid anim" data-step="2">
-    <div class="dcard"><h5>¿Es solo una pregunta puntual?</h5><p>Un buen prompt claro, sin nada más, suele bastar.</p></div>
-    <div class="dcard"><h5>¿Se repite siempre igual?</h5><p>Conviene empaquetarlo como skill para que todo el equipo obtenga el mismo resultado.</p></div>
-    <div class="dcard"><h5>¿Necesita decidir y ejecutar varios pasos?</h5><p>Ahí habla de un agente orquestando varios skills — y de definir qué puede hacer solo.</p></div>
+  <div class="eyebrow anim" data-step="0">Cierre · Ejercicio final</div>
+  <h2 class="htitle anim" data-step="1">¿Prompt, skill <b>o agente?</b></h2>
+  <div class="qz anim" data-step="2">
+    <div class="qz-top"><span id="qzProg"></span><span id="qzScore"></span></div>
+    <div class="qz-card" id="qzCard"></div>
+    <div class="qz-opts">
+      <button class="qz-opt" data-a="prompt" onclick="qzAnswer(this)"><b>✍️ Prompt</b><small>Una pregunta puntual</small></button>
+      <button class="qz-opt" data-a="skill" onclick="qzAnswer(this)"><b>📦 Skill</b><small>Se repite siempre igual</small></button>
+      <button class="qz-opt" data-a="agente" onclick="qzAnswer(this)"><b>🤖 Agente</b><small>Decide y ejecuta varios pasos</small></button>
+    </div>
+    <div class="qz-fb" id="qzFb"></div>
+    <button class="ibtn" id="qzNext" onclick="qzNext()" style="display:none">Siguiente ▶</button>
   </div>
-  <div class="insight anim" data-step="3">El error más común no es usar poco la IA — es pedirle algo mal definido y confiar en la respuesta sin revisarla. El resto son detalles de implementación.</div>
+  <div class="insight anim" data-step="3">El error más común no es usar poco la IA: es pedirle algo mal definido y confiar en la respuesta sin revisarla.</div>
+  <aside class="notes"><p>Antes de usar IA para algo, pregúntese: ¿es una pregunta puntual? Un buen prompt basta. ¿Se repite siempre igual? Empaquételo como skill. ¿Necesita decidir y ejecutar varios pasos? Es un agente, y hay que definir qué puede hacer solo.</p><p>Dinámica: lea cada situación en voz alta y pida que el público vote antes de hacer clic.</p></aside>
 </section>
 
 </div>
@@ -399,7 +682,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
 const slides=document.querySelectorAll('.slide');
 const total=slides.length;
 let cur=0,step=0;
-const titles=['Portada','Las cuatro sesiones','Qué hace la IA','Qué es un token','El contexto se acumula','Ventana de contexto (ejercicio)','La IA no aprende de usted','Alucinación (ejercicio)','Alimentar con contexto','El adaptador universal (MCP)','Prompt vs. skill','Cuándo un prompt se vuelve skill','Qué es un agente','Tres formas de especializar','Costos y riesgos','Cierre: mapa de decisión'];
+const titles=['Portada','Las cuatro sesiones','Qué hace la IA (ejercicio)','Qué es un token (ejercicio)','El contexto se acumula (ejercicio)','Ventana de contexto (ejercicio)','La IA no aprende de usted (ejercicio)','Alucinación (ejercicio)','Alimentar con contexto (ejercicio)','El adaptador universal: MCP (ejercicio)','Prompt vs. skill (ejercicio)','Qué es un agente (ejercicio)','Tres formas de especializar (ejercicio)','Costos y riesgos (ejercicio)','Cierre: ¿prompt, skill o agente?'];
 
 function getA(sl){return [...sl.querySelectorAll('[data-step]')].sort((a,b)=>+a.dataset.step - +b.dataset.step)}
 function resetA(){getA(slides[cur]).forEach(el=>el.classList.remove('in'));step=0}
@@ -414,6 +697,7 @@ function go(idx,ra){
   document.getElementById('cnt').textContent=`${cur+1} / ${total}`;
   document.getElementById('pgfill').style.width=`${((cur+1)/total)*100}%`;
   setTimeout(()=>playAll(),120);
+  notesRefresh();
 }
 go(0,false);
 getA(slides[0]).forEach(el=>el.classList.add('in'));
@@ -435,6 +719,8 @@ titles.forEach((t,i)=>{
 });
 
 document.addEventListener('keydown',e=>{
+  if(e.target.closest&&e.target.closest('input,textarea,select'))return;
+  if(e.key==='n'||e.key==='N')notesToggle();
   if(e.key==='ArrowRight'||e.key==='ArrowDown')go(cur+1);
   if(e.key==='ArrowLeft'||e.key==='ArrowUp')go(cur-1);
   if(e.key===' '){e.preventDefault();if(!playNext())go(cur+1)}
@@ -443,29 +729,450 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape')document.getElementById('idx').classList.remove('open');
 });
 
-/* Ejercicio: caja de contexto (cupo máximo 4) */
-let deskItems=[];
-function addToDesk(el){
-  deskItems.push(el.textContent);
-  let fell=false;
-  if(deskItems.length>4){ deskItems.shift(); fell=true; }
-  const desk=document.getElementById('desk');
-  const msg=document.getElementById('deskmsg');
-  desk.innerHTML='';
-  deskItems.forEach(t=>{
+/* Ejercicio: ventana de contexto — drag & drop, cupo 5, sale el más antiguo (FIFO) */
+const CTX_MAX=5;
+let ctxItems=[], ctxBusy=false;
+const ctxBank=document.getElementById('ctxBank');
+const ctxBox=document.getElementById('ctxBox');
+function ctxChip(id){return ctxBank.querySelector(`.ctx-item[data-id="${id}"]`)}
+function ctxRender(enterId){
+  ctxBox.querySelectorAll('.ctx-slot').forEach((sl,i)=>{
+    sl.innerHTML='';
+    const id=ctxItems[i]; if(id===undefined)return;
+    const src=ctxChip(id);
     const c=document.createElement('div');
-    c.className='chip fill';
-    c.textContent=t;
-    desk.appendChild(c);
+    c.className='ctx-card'+(id===enterId?' enter':'');
+    c.innerHTML=`<div class="ico">${src.dataset.ico}</div>${src.dataset.label}`;
+    sl.appendChild(c);
   });
-  if(fell){
-    desk.classList.add('full');
-    msg.textContent='La caja solo tiene espacio para 4 — el elemento más antiguo se cayó para que entrara el nuevo.';
-  } else {
-    desk.classList.remove('full');
-    msg.textContent='';
+  ctxBox.classList.toggle('full',ctxItems.length>=CTX_MAX);
+  document.getElementById('ctxMeter').textContent=`Caja: ${ctxItems.length} / ${CTX_MAX}`;
+}
+function ctxAdd(id){
+  id=String(id);
+  if(ctxBusy||ctxItems.includes(id))return;
+  const msg=document.getElementById('ctxMsg');
+  ctxBank.querySelectorAll('.ctx-item.forgot').forEach(el=>el.classList.remove('forgot'));
+  const chip=ctxChip(id); chip.classList.add('used'); chip.draggable=false;
+  if(ctxItems.length<CTX_MAX){
+    ctxItems.push(id); ctxRender(id);
+    msg.textContent = ctxItems.length===CTX_MAX ? 'La caja está llena. El próximo elemento va a sacar al primero.' : '';
+    return;
+  }
+  ctxBusy=true;
+  const oldId=ctxItems[0];
+  const oldCard=ctxBox.querySelector('.ctx-slot .ctx-card');
+  if(oldCard)oldCard.classList.add('out');
+  setTimeout(()=>{
+    ctxItems.shift(); ctxItems.push(id); ctxRender(id);
+    const old=ctxChip(oldId);
+    old.classList.remove('used'); old.classList.add('forgot'); old.draggable=true;
+    msg.textContent=`"${old.dataset.label}" salió de la caja: para la IA, eso ya no existe en esta conversación.`;
+    ctxBusy=false;
+  },380);
+}
+function ctxReset(){
+  ctxItems=[]; ctxBusy=false;
+  ctxBank.querySelectorAll('.ctx-item').forEach(el=>{el.classList.remove('used','forgot');el.draggable=true});
+  document.getElementById('ctxMsg').textContent='';
+  ctxRender();
+}
+ctxBank.querySelectorAll('.ctx-item').forEach(el=>{
+  el.addEventListener('dragstart',e=>{
+    if(el.classList.contains('used')){e.preventDefault();return}
+    e.dataTransfer.setData('text/plain',el.dataset.id); e.dataTransfer.effectAllowed='move';
+    el.classList.add('dragging');
+  });
+  el.addEventListener('dragend',()=>el.classList.remove('dragging'));
+  el.addEventListener('dblclick',()=>ctxAdd(el.dataset.id)); /* respaldo sin arrastre */
+});
+ctxBox.addEventListener('dragover',e=>{e.preventDefault();ctxBox.classList.add('over')});
+ctxBox.addEventListener('dragleave',e=>{if(!ctxBox.contains(e.relatedTarget))ctxBox.classList.remove('over')});
+ctxBox.addEventListener('drop',e=>{
+  e.preventDefault(); ctxBox.classList.remove('over');
+  const id=e.dataTransfer.getData('text/plain'); if(id!=='')ctxAdd(id);
+});
+
+/* ===== Notas del presentador ===== */
+function notesRefresh(){
+  const p=document.getElementById('notesPanel'); if(!p)return;
+  const n=slides[cur].querySelector('.notes');
+  p.innerHTML='<h6>Notas del presentador · '+(cur+1)+'</h6>'+(n?n.innerHTML:'<p>Sin notas para esta diapositiva.</p>');
+}
+function notesToggle(){document.getElementById('notesPanel').classList.toggle('open');notesRefresh();}
+function escH(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* ===== S3 · Completa la frase ===== */
+const PRED={
+  _start:[['para',48],['con',22],['urgente',18],['mañana',12]],
+  para:[['revisar',41],['hablar',27],['el',20],['mañana',12]],
+  con:[['el',44],['nosotros',31],['gerencia',25]],
+  urgente:[['para',52],['mañana',28],['.',20]],
+  'mañana':[['para',46],['.',34],['temprano',20]],
+  temprano:[['para',50],['.',50]],
+  nosotros:[['para',60],['.',40]],
+  gerencia:[['para',55],['.',45]],
+  revisar:[['el',55],['la',30],['los',15]],
+  hablar:[['del',58],['con',42]],
+  el:[['contrato',47],['presupuesto',33],['proyecto',20]],
+  del:[['contrato',45],['presupuesto',35],['proyecto',20]],
+  la:[['propuesta',60],['factura',40]],
+  los:[['costos',62],['plazos',38]],
+  hoy:[['.',100]]
+};
+let predCur='_start',predN=0,predDone=false,predTimer=null;
+function predList(){ if(predN>=10)return [['.',100]]; return PRED[predCur]||[['.',70],['hoy',30]]; }
+function predRender(){
+  const box=document.getElementById('predOpts');
+  if(predDone){box.innerHTML='<div class="pred-done">✅ Frase completa. Cada palabra fue una apuesta por la opción más probable, no una verificación de que sea verdad.</div>';return;}
+  box.innerHTML=predList().map(([w,p])=>`<button class="pred-opt" data-w="${w}" onclick="predPick(this.dataset.w)"><b>${w==='.'?'(punto final)':w}</b><div class="pred-bar"><i data-p="${p}"></i></div><span>${p}%</span></button>`).join('');
+  setTimeout(()=>box.querySelectorAll('.pred-bar i').forEach(i=>i.style.width=i.dataset.p+'%'),30);
+}
+function predPick(w){
+  if(predDone)return;
+  const sp=document.createElement('span'); sp.className='pred-w'; sp.textContent=(w==='.'?'':' ')+w;
+  document.getElementById('predWords').appendChild(sp);
+  predN++; if(w==='.')predDone=true; else predCur=w;
+  predRender();
+}
+function predAuto(){
+  if(predTimer)return;
+  if(predDone)predReset();
+  const tick=()=>{
+    if(predDone){predTimer=null;return;}
+    const first=document.querySelector('#predOpts .pred-opt'); if(!first){predTimer=null;return;}
+    first.classList.add('hl');
+    predTimer=setTimeout(()=>{predPick(first.dataset.w);predTimer=setTimeout(tick,450);},650);
+  };
+  tick();
+}
+function predReset(){clearTimeout(predTimer);predTimer=null;predCur='_start';predN=0;predDone=false;document.getElementById('predWords').innerHTML='';predRender();}
+predRender();
+
+/* ===== S4 · Cortador de fichas (simulación) ===== */
+function tokSplit(s){
+  const out=[];
+  (s.match(/\p{L}+|\p{N}+|[^\s\p{L}\p{N}]/gu)||[]).forEach(w=>{
+    if(/^\p{N}+$/u.test(w)){for(let i=0;i<w.length;i+=3)out.push(w.slice(i,i+3));return;}
+    if(/^\p{L}+$/u.test(w)&&w.length>5){
+      const parts=[];for(let i=0;i<w.length;i+=5)parts.push(w.slice(i,i+5));
+      if(parts.length>1&&parts[parts.length-1].length<2){const l=parts.pop();parts[parts.length-1]+=l;}
+      out.push(...parts);return;
+    }
+    out.push(w);
+  });
+  return out;
+}
+function tokRender(){
+  const v=document.getElementById('tokIn').value;
+  const t=tokSplit(v);
+  document.getElementById('tokOut').innerHTML=t.length?t.map((x,i)=>`<span class="tok-t tok-c${i%4}" style="animation-delay:${i*40}ms">${escH(x)}</span>`).join(''):'<span class="hint">Escriba algo arriba…</span>';
+  document.getElementById('tokW').textContent=(v.match(/\S+/g)||[]).length;
+  document.getElementById('tokT').textContent=t.length;
+}
+function tokSet(b){document.getElementById('tokIn').value=b.textContent;tokRender();}
+tokRender();
+
+/* ===== S5 · El contexto se acumula ===== */
+const ACC_MSGS=['"Necesito un resumen del proyecto"','"Hazlo más corto"','"Agrega los riesgos"','"Ahora en tono formal"','"Tradúcelo al inglés"'];
+const ACC_COL=[['var(--gold-lt)','var(--gold)','#5B21B6'],['var(--teal-lt)','var(--teal)','#036B57'],['var(--pink-lt)','var(--pink)','#A3145A'],['var(--coral-lt)','var(--coral)','#B8330E']];
+let accN=0;
+function accRender(){
+  const st=document.getElementById('accStage');
+  if(!accN){st.innerHTML='<div class="acc-empty">Conversación vacía</div>';return;}
+  let h=`<div class="acc-core${accN===1?' acc-new':''}">Mensaje 1 · ${ACC_MSGS[0]}</div>`;
+  for(let i=1;i<accN;i++){
+    const c=ACC_COL[(i-1)%ACC_COL.length];
+    h=`<div class="acc-l${i===accN-1?' acc-new':''}" style="background:${c[0]};border-color:${c[1]}"><span class="acc-lab" style="color:${c[2]}">Mensaje ${i+1} · ${ACC_MSGS[i]}</span>${h}</div>`;
+  }
+  st.innerHTML=h;
+}
+function accSend(){
+  if(accN>=ACC_MSGS.length)return;
+  accN++; accRender();
+  document.getElementById('accN').textContent=accN;
+  const m=document.getElementById('accMsg');
+  if(accN===1)m.textContent='La IA lee este mensaje y responde.';
+  else if(accN<ACC_MSGS.length)m.textContent=`Para responder el mensaje ${accN}, la IA vuelve a leer los ${accN} mensajes.`;
+  else{m.textContent='…y así sigue creciendo hasta llenar la caja. En el siguiente ejercicio verán qué pasa cuando se llena.';document.getElementById('accSend').disabled=true;}
+}
+function accClose(){
+  if(!accN)return;
+  const st=document.getElementById('accStage'); st.classList.add('closing');
+  setTimeout(()=>{
+    accN=0;accRender();st.classList.remove('closing');
+    document.getElementById('accN').textContent=0;
+    document.getElementById('accSend').disabled=false;
+    document.getElementById('accMsg').textContent='La conversación se cerró y la caja desapareció. La próxima empieza vacía: la IA no se quedó con nada.';
+  },400);
+}
+accRender();
+
+/* ===== S7 · Memoria de la herramienta ===== */
+let memBusy=false,memTimers=[];
+function memClear(){memTimers.forEach(clearTimeout);memTimers=[];memBusy=false;document.getElementById('memTue').innerHTML='<div class="mem-day">Martes · conversación nueva</div><div class="mem-empty">Aún no empieza</div>';}
+function memToggle(){
+  const on=document.getElementById('memOn').checked;
+  document.getElementById('memLbl').textContent='Memoria de la herramienta: '+(on?'ENCENDIDA':'APAGADA');
+  document.getElementById('memNote').classList.toggle('on',on);
+  memClear();
+}
+function memRun(){
+  if(memBusy)return; memBusy=true;
+  const on=document.getElementById('memOn').checked, col=document.getElementById('memTue'), note=document.getElementById('memNote'), stamp=document.getElementById('memStamp');
+  col.innerHTML='<div class="mem-day">Martes · conversación nueva</div>';
+  const add=(h,d)=>memTimers.push(setTimeout(()=>col.insertAdjacentHTML('beforeend',h),d));
+  add('<div class="bub user">Redáctame un correo para el cliente.</div>',100);
+  let end;
+  if(on){
+    memTimers.push(setTimeout(()=>{note.classList.remove('send');void note.offsetWidth;note.classList.add('send');},700));
+    add('<div class="mem-pass">📒 La herramienta le pasa la nota al modelo</div>',900);
+    add('<div class="bub ai">Estimado cliente: reciba un cordial saludo. Le escribo para…</div>',1600);
+    add('<div class="mem-res good">✓ "Recordó" gracias a la nota de la herramienta</div>',2100);
+    end=2200;
+  }else{
+    add('<div class="bub ai">¡Claro! ¿Qué tono prefiere: formal o informal?</div>',1000);
+    add('<div class="mem-res bad">✗ Empezó de cero: no sabe lo del lunes</div>',1500);
+    end=1600;
+  }
+  memTimers.push(setTimeout(()=>{stamp.classList.remove('flash');void stamp.offsetWidth;stamp.classList.add('flash');memBusy=false;},end));
+}
+
+/* ===== S9 · Fuentes de contexto ===== */
+const SRC={manual:false,busq:false,lib:false};
+const SRC_TXT={
+  gen:['Depende de cada empresa.','Normalmente los plazos van de 15 a 30 días.','Le sugiero revisar la política de su organización.'],
+  manual:['Según el documento que adjuntó, el cliente tiene 30 días desde la compra.','Debe presentar la factura.'],
+  busq:['Política comercial vigente, sección 4.2: 30 días con factura.','Productos en promoción: 15 días.','Productos hechos a la medida: no admiten devolución.']
+};
+function srcToggle(b){const k=b.dataset.k;SRC[k]=!SRC[k];b.classList.toggle('on',SRC[k]);srcRender();}
+function srcRender(){
+  let key='gen',tag='Genérica: no conoce su empresa',bg='var(--coral-lt)',fg='#B8330E';
+  if(SRC.manual){key='manual';tag='Con el documento que usted adjuntó';bg='var(--gold-lt)';fg='#5B21B6';}
+  if(SRC.busq){key='busq';tag='Con el fragmento exacto que encontró el sistema';bg='var(--teal-lt)';fg='#036B57';}
+  if(SRC.lib)tag+=' · en su formato preferido';
+  const ch=['❓ La pregunta'];
+  if(SRC.manual)ch.push('📎 Documento adjunto');
+  if(SRC.busq)ch.push('🔎 Sección 4.2 de la política');
+  if(SRC.lib)ch.push('📒 Nota: "prefiere viñetas"');
+  document.getElementById('srcChips').innerHTML=ch.map(c=>`<span class="src-chip">${c}</span>`).join('');
+  const t=document.getElementById('srcTag'); t.textContent=tag; t.style.background=bg; t.style.color=fg;
+  const L=SRC_TXT[key];
+  document.getElementById('srcTxt').innerHTML=SRC.lib?'<ul>'+L.map(l=>'<li>'+l+'</li>').join('')+'</ul>':'<p>'+L.join(' ')+'</p>';
+  const a=document.getElementById('srcAns'); a.classList.remove('pop'); void a.offsetWidth; a.classList.add('pop');
+}
+srcRender();
+
+/* ===== S10 · MCP ===== */
+const MCP_SYS=['📅 Calendario','🗂️ Sistema de tickets','📁 Documentos','📧 Correo','👥 CRM de clientes','📊 Reportes'];
+const MCP_COL=['var(--coral)','var(--gold)','var(--teal)','var(--pink)','var(--ink)','var(--muted)'];
+let mcpOn=false,mcpN=3;
+function mcpRender(msg){
+  const svg=document.getElementById('mcpSvg'), H=290, sp=H/(mcpN+1);
+  let g='';
+  const ys=[...Array(mcpN)].map((_,i)=>Math.round(sp*(i+1)));
+  if(!mcpOn){
+    ys.forEach((y,i)=>{
+      g+=`<path class="ln" pathLength="1" d="M150,145 C420,145 460,${y} 730,${y}" style="stroke:${MCP_COL[i]};animation-delay:${i*90}ms"/>`;
+      g+=`<text x="600" y="${y-8}" font-size="11.5" font-weight="700" style="fill:${MCP_COL[i]}">conexión a la medida #${i+1}</text>`;
+    });
+  }else{
+    g+=`<path class="ln" pathLength="1" d="M150,145 L400,145" style="stroke:var(--ink);stroke-width:5"/>`;
+    ys.forEach((y,i)=>{g+=`<path class="ln" pathLength="1" d="M560,145 C650,145 650,${y} 730,${y}" style="stroke:var(--gold);animation-delay:${200+i*70}ms"/>`;});
+    g+=`<rect x="400" y="105" width="160" height="80" rx="16" style="fill:var(--gold-lt);stroke:var(--gold);stroke-width:3"/>`;
+    g+=`<text x="480" y="140" text-anchor="middle" font-size="22" font-weight="800" style="fill:#5B21B6">MCP</text>`;
+    g+=`<text x="480" y="163" text-anchor="middle" font-size="12" style="fill:var(--muted)">el adaptador común</text>`;
+  }
+  g+=`<rect x="30" y="110" width="120" height="70" rx="14" style="fill:var(--ink)"/><text x="90" y="152" text-anchor="middle" font-size="18" font-weight="800" fill="#fff">🤖 IA</text>`;
+  ys.forEach((y,i)=>{g+=`<g class="pop"><rect x="730" y="${y-19}" width="240" height="38" rx="10" style="fill:var(--bg);stroke:var(--line);stroke-width:2"/><text x="746" y="${y+5}" font-size="14.5" font-weight="700" style="fill:var(--ink)">${MCP_SYS[i]}</text></g>`;});
+  svg.innerHTML=g;
+  document.getElementById('mcpCount').innerHTML=mcpOn?'<b>1</b> estándar común para todos':`<b>${mcpN}</b> conexiones distintas, hechas a mano`;
+  document.getElementById('mcpMsg').textContent=msg||'';
+}
+function mcpSet(on){
+  mcpOn=on;
+  document.getElementById('mcpOff').classList.toggle('on',!on);
+  document.getElementById('mcpOnB').classList.toggle('on',on);
+  mcpRender(on?'Todos los sistemas se conectan al mismo adaptador.':'Cada sistema necesita su propia conexión, construida y mantenida por separado.');
+}
+function mcpAdd(){
+  if(mcpN>=MCP_SYS.length){mcpRender('Ya están todos los sistemas del ejemplo.');return;}
+  mcpN++;
+  mcpRender(mcpOn?'Nuevo sistema: se enchufa al mismo adaptador, sin construir otra conexión en la IA.':'Nuevo sistema: otra conexión a la medida por construir y mantener.');
+}
+function mcpReset(){mcpN=3;mcpSet(false);document.getElementById('mcpMsg').textContent='';}
+mcpRender();
+
+/* ===== S11 · Prompt -> skill ===== */
+const SK_DAYS=['Lunes','Martes','Miércoles','Jueves','Viernes'];
+const SK_PROMPTS=['"Resume las novedades del proyecto para el comité…"','"Hazme el resumen del proyecto como el lunes, pero…"','"Otra vez el resumen, ahora con los riesgos…"','"Resumen semanal para el comité, con…"','"El resumen de siempre, pero más corto…"'];
+const SK_FMT=[['Formato A','var(--coral-lt)','#B8330E'],['Formato B','var(--teal-lt)','#036B57'],['Formato C','var(--pink-lt)','#A3145A'],['Formato D','var(--coral-lt)','#B8330E'],['Formato E','var(--teal-lt)','#036B57']];
+let skDay=0,skPacked=false,skMin=0,skFmts=new Set();
+function skUI(){
+  const b=document.getElementById('skBtn');
+  if(skDay>=SK_DAYS.length){b.textContent='Semana terminada';b.disabled=true;}
+  else{b.disabled=false;b.textContent=skPacked?`▶ Usar el skill (${SK_DAYS[skDay]})`:`✍️ Escribir la instrucción (${SK_DAYS[skDay]})`;}
+  document.getElementById('skMin').textContent=skMin;
+  document.getElementById('skFmt').textContent=skFmts.size;
+}
+function skStep(){
+  if(skDay>=SK_DAYS.length)return;
+  const d=SK_DAYS[skDay], msg=document.getElementById('skMsg'); let h;
+  if(skPacked){
+    skFmts.add('std');
+    h=`<div class="sk-card skill"><div class="d">📦 ${d}</div><div class="p">Usa el skill "Reporte semanal"</div><div class="m">+0 min redactando</div><div class="f" style="background:#fff;color:#5B21B6">Formato estándar ✓</div></div>`;
+    msg.textContent='Mismo resultado, sin redactar nada. Y cualquiera del equipo lo usa igual.';
+  }else{
+    const f=SK_FMT[skDay]; skMin+=6; skFmts.add(f[0]);
+    h=`<div class="sk-card"><div class="d">✍️ ${d}</div><div class="p">${SK_PROMPTS[skDay]}</div><div class="m">+6 min redactando</div><div class="f" style="background:${f[1]};color:${f[2]}">${f[0]}</div></div>`;
+    if(skDay===0)msg.textContent='Primera vez: tiene sentido escribirla.';
+    else if(skDay===1)msg.textContent='Casi la misma instrucción, reescrita de nuevo… y el resultado sale distinto.';
+    else if(skDay===2){msg.textContent='¿Notó el patrón? Tres días escribiendo casi lo mismo, con resultados distintos. Es momento de empaquetarlo.';document.getElementById('skPack').style.display='';}
+    else msg.textContent='Sigue reescribiendo lo mismo…';
+  }
+  document.getElementById('skTrack').insertAdjacentHTML('beforeend',h);
+  skDay++; skUI();
+  if(skDay>=SK_DAYS.length){
+    document.getElementById('skPack').style.display='none';
+    msg.textContent=skPacked?`Semana cerrada: ${skMin} min redactando en total. Desde que lo empaquetó: cero minutos y siempre el mismo resultado.`:`Semana cerrada: ${skMin} min reescribiendo lo mismo y ${skFmts.size} resultados distintos.`;
   }
 }
+function skPack(){
+  skPacked=true;
+  document.getElementById('skPack').style.display='none';
+  document.getElementById('skBanner').classList.add('on');
+  document.getElementById('skMsg').textContent='Guardado una sola vez: el procedimiento queda escrito y probado. Úselo el resto de la semana.';
+  skUI();
+}
+function skReset(){
+  skDay=0;skPacked=false;skMin=0;skFmts=new Set();
+  document.getElementById('skTrack').innerHTML='';
+  document.getElementById('skPack').style.display='none';
+  document.getElementById('skBanner').classList.remove('on');
+  document.getElementById('skMsg').textContent='';
+  skUI();
+}
+skUI();
+
+/* ===== S13 · Agente ===== */
+const AG_STEPS=[
+  [['agHub','Recibe el objetivo: responder un reclamo por demora.'],['agN1','Usa su skill "consultar historial": el pedido lleva 3 días de retraso.'],['agN2','Usa su skill "redactar respuesta": disculpa y nueva fecha de entrega.'],[null,'✅ Responde al cliente. No necesitó a nadie más.']],
+  [['agHub','Recibe el objetivo: el cliente menciona una cláusula del contrato.'],['agN1','Usa su skill "consultar historial" del cliente.'],['agN3','Detecta un tema legal: le pasa esa parte al Agente Legal.'],['agN3','El Agente Legal revisa la cláusula y le devuelve su criterio.'],['agN2','Redacta la respuesta incluyendo el criterio legal.'],[null,'✅ Responde al cliente con respaldo legal.']]
+];
+let agTimers=[];
+function agRun(i,btn){
+  agTimers.forEach(clearTimeout);agTimers=[];
+  document.querySelectorAll('.ag-case').forEach(b=>b.classList.toggle('on',b===btn));
+  document.getElementById('agRoot').classList.remove('idle');
+  document.querySelectorAll('.ag-node').forEach(n=>n.classList.remove('on','used'));
+  const log=document.getElementById('agLog'); log.innerHTML='';
+  let k=0;
+  AG_STEPS[i].forEach(([n,t],idx)=>{
+    agTimers.push(setTimeout(()=>{
+      document.querySelectorAll('.ag-node.on').forEach(x=>{x.classList.remove('on');x.classList.add('used');});
+      if(n)document.getElementById(n).classList.add('on');
+      log.insertAdjacentHTML('beforeend',`<div class="ag-line"><i>${n?idx+1:''}</i><span>${t}</span></div>`);
+    },idx*1100));
+  });
+}
+
+/* ===== S14 · Emparejar ===== */
+const MT_ITEMS=[['carp','📚 "Que responda con los precios y la política vigente"'],['entr','🎭 "Que hable exactamente con el estilo de la marca"'],['inst','💬 "Que responda cordial y en menos de 100 palabras"']];
+const MT_HINT={inst:'Pista: esto se logra solo diciéndole cómo responder. Es lo más rápido y barato.',carp:'Pista: para esto necesita los datos reales de la empresa, no más instrucciones.',entr:'Pista: copiar un estilo exacto exige entrenarla con miles de ejemplos. Es lo más lento y caro.'};
+let mtSel=null,mtDone=0;
+const mtBank=document.getElementById('mtBank');
+function mtMsg(t,ok){const m=document.getElementById('mtMsg');m.textContent=t;m.classList.toggle('ok',!!ok);}
+function mtTry(k,zone){
+  const item=mtBank.querySelector(`.mt-item[data-k="${k}"]`);
+  if(!item||zone.classList.contains('done'))return;
+  if(zone.dataset.k===k){
+    zone.classList.add('done'); zone.querySelector('.mt-drop').textContent=item.textContent; item.remove(); mtDone++;
+    mtMsg(mtDone===3?'✅ Regla práctica: empiece siempre por la izquierda. El entrenamiento a la medida es el último recurso.':'✅ ¡Correcto! Mire el costo y el tiempo que aparecieron.',true);
+  }else{
+    zone.classList.remove('shake');void zone.offsetWidth;zone.classList.add('shake');
+    mtMsg(MT_HINT[k]);
+  }
+  mtSel=null; mtBank.querySelectorAll('.mt-item').forEach(x=>x.classList.remove('sel'));
+}
+function mtReset(){
+  mtSel=null;mtDone=0;
+  mtBank.innerHTML=MT_ITEMS.map(([k,t])=>`<div class="mt-item" draggable="true" data-k="${k}">${t}</div>`).join('');
+  document.querySelectorAll('.mt-zone').forEach(z=>{z.classList.remove('done','over','shake');z.querySelector('.mt-drop').textContent='Suelte aquí';});
+  mtMsg('');
+}
+mtBank.addEventListener('dragstart',e=>{const it=e.target.closest('.mt-item');if(!it)return;e.dataTransfer.setData('text/plain',it.dataset.k);});
+mtBank.addEventListener('click',e=>{const it=e.target.closest('.mt-item');if(!it)return;const was=it.classList.contains('sel');mtBank.querySelectorAll('.mt-item').forEach(x=>x.classList.remove('sel'));if(!was){it.classList.add('sel');mtSel=it.dataset.k;}else mtSel=null;});
+document.querySelectorAll('.mt-zone').forEach(z=>{
+  z.addEventListener('dragover',e=>{e.preventDefault();if(!z.classList.contains('done'))z.classList.add('over');});
+  z.addEventListener('dragleave',e=>{if(!z.contains(e.relatedTarget))z.classList.remove('over');});
+  z.addEventListener('drop',e=>{e.preventDefault();z.classList.remove('over');const k=e.dataTransfer.getData('text/plain');if(k)mtTry(k,z);});
+  z.addEventListener('click',()=>{if(mtSel)mtTry(mtSel,z);});
+});
+mtReset();
+
+/* ===== S15 · Costos y riesgos ===== */
+const CS_SIZE=['1 página','10 páginas','50 páginas','200 páginas','500 páginas'],CS_T=[12,25,45,70,95],CS_C=[8,20,42,68,96],CS_Q=['Muy bajo','Bajo','Medio','Alto','Muy alto'];
+const RK_S=['Borrador de un correo interno','Resumen que verá un cliente','Cifra que irá en un contrato','Decisión legal o financiera'];
+const RK_A=['👀 Lectura rápida antes de enviar','📝 Revisión completa del contenido','🔍 Validar cada dato contra la fuente original','✋ Aprobación de un responsable antes de ejecutar'];
+const RK_COL=['var(--teal)','var(--gold)','var(--coral)','var(--pink)'];
+function csRender(){
+  const v=+document.getElementById('csSize').value-1;
+  document.getElementById('csVal').textContent='📄 '+CS_SIZE[v];
+  document.getElementById('csT').style.width=CS_T[v]+'%';
+  document.getElementById('csC').style.width=CS_C[v]+'%';
+  document.getElementById('csTq').textContent=CS_Q[v];
+  document.getElementById('csCq').textContent=CS_Q[v];
+}
+function rkRender(){
+  const v=+document.getElementById('rkSens').value;
+  document.getElementById('rkVal').textContent=RK_S[v-1];
+  document.querySelectorAll('#rkLvl span').forEach((s,i)=>s.style.background=i<v?RK_COL[v-1]:'rgba(255,255,255,.1)');
+  document.getElementById('rkAct').textContent='Revisión humana: '+RK_A[v-1];
+}
+csRender();rkRender();
+
+/* ===== S16 · Quiz final ===== */
+const QZ=[
+  ['Traducir al inglés un correo puntual que le llegó hoy.','prompt','Es una tarea única y puntual: un buen prompt claro basta.'],
+  ['Cada viernes, el reporte de estado del proyecto, siempre con el mismo formato.','skill','Se repite igual cada semana: empaquetarlo asegura el mismo resultado para todo el equipo.'],
+  ['Recibir cada reclamo, revisar el historial, decidir si pasarlo a legal y responder al cliente.','agente','Hay que decidir y ejecutar varios pasos, e incluso pasarle una parte a otro: eso es un agente.'],
+  ['Preguntar qué significa una sigla que apareció en un documento.','prompt','Una pregunta puntual: no hace falta nada más.'],
+  ['Que todas las minutas del equipo salgan con compromisos, responsables y fechas, igual para todos.','skill','El mismo procedimiento, repetido por varias personas: es un skill.'],
+  ['Revisar los tickets nuevos, clasificarlos por urgencia y asignarlos al equipo correcto.','agente','Recibe un objetivo y decide qué hacer con cada caso, paso a paso: un agente.']
+];
+let qzI=0,qzOk=0,qzEnd=false;
+function qzRender(){
+  const opts=document.querySelectorAll('.qz-opt');
+  document.getElementById('qzScore').textContent='Aciertos: '+qzOk;
+  document.getElementById('qzNext').style.display='none';
+  if(qzEnd){
+    document.getElementById('qzProg').textContent='Resultado';
+    document.getElementById('qzCard').textContent=`${qzOk} de ${QZ.length} aciertos.`;
+    document.getElementById('qzFb').textContent='La pregunta clave antes de usar IA: ¿es puntual, se repite igual o requiere decidir varios pasos?';
+    opts.forEach(b=>{b.disabled=true;b.classList.remove('correct','wrong');});
+    const n=document.getElementById('qzNext'); n.textContent='Repetir ↺'; n.style.display='';
+    return;
+  }
+  document.getElementById('qzProg').textContent=`Situación ${qzI+1} de ${QZ.length}`;
+  const c=document.getElementById('qzCard'); c.textContent=QZ[qzI][0]; c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop');
+  document.getElementById('qzFb').textContent='';
+  opts.forEach(b=>{b.disabled=false;b.classList.remove('correct','wrong');});
+}
+function qzAnswer(btn){
+  const q=QZ[qzI], ok=btn.dataset.a===q[1];
+  document.querySelectorAll('.qz-opt').forEach(b=>{b.disabled=true;if(b.dataset.a===q[1])b.classList.add('correct');});
+  if(!ok)btn.classList.add('wrong'); else qzOk++;
+  document.getElementById('qzScore').textContent='Aciertos: '+qzOk;
+  document.getElementById('qzFb').textContent=(ok?'✅ ':'❌ ')+q[2];
+  const n=document.getElementById('qzNext'); n.textContent=qzI<QZ.length-1?'Siguiente ▶':'Ver resultado ▶'; n.style.display='';
+}
+function qzNext(){
+  if(qzEnd){qzI=0;qzOk=0;qzEnd=false;}
+  else if(qzI<QZ.length-1)qzI++;
+  else qzEnd=true;
+  qzRender();
+}
+qzRender();
 
 /* Ejercicio: quiz alucinación — siempre revela la correcta */
 function checkQuiz(clicked){
