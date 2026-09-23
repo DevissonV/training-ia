@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IA explicada sin tecnicismos</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFBF2; --ink:#181524; --muted:#5B5468;
+  --paper:#FFFFFF; --line:#E8E2F0;
+  --coral:#FF5A36; --coral-lt:#FFE1D6;
+  --teal:#00A388; --teal-lt:#CFF5EC;
+  --gold:#7C3AED; --gold-lt:#EDE1FE;
+  --pink:#DB2777; --pink-lt:#FCE0EE;
+  --dark:#15102A; --dark2:#221A3D;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-family:'Inter',sans-serif;color:var(--ink)}
+#deck{width:100%;height:100%;position:relative}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:52px 88px;opacity:0;pointer-events:none;transition:opacity .4s ease;background:var(--bg);overflow:hidden}
+.slide.active{opacity:1;pointer-events:all}
+.slide.dark{background:var(--dark);color:#F3EEE4}
+.slide.dark .muted{color:rgba(243,238,228,.65)}
+
+#pgbar{position:fixed;top:0;left:0;right:0;height:3px;background:rgba(0,0,0,.08);z-index:999}
+#pgfill{height:100%;background:var(--coral);transition:width .4s ease}
+
+#ctrl{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;align-items:center;gap:4px;background:rgba(21,16,42,.94);border:1px solid rgba(255,255,255,.12);border-radius:40px;padding:8px 14px;backdrop-filter:blur(14px)}
+.cbtn{background:none;border:none;color:rgba(255,255,255,.65);cursor:pointer;font-size:13px;font-family:'Inter',sans-serif;padding:6px 10px;border-radius:20px;transition:all .15s;display:flex;align-items:center;gap:5px}
+.cbtn:hover{background:rgba(255,255,255,.14);color:white}
+.cbtn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.cdiv{width:1px;height:17px;background:rgba(255,255,255,.16);margin:0 2px}
+#cnt{color:rgba(255,255,255,.5);font-size:12px;min-width:44px;text-align:center}
+
+#kbh{position:fixed;top:18px;right:22px;z-index:1000;display:flex;gap:6px;opacity:.55}
+.kbd{background:rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.12);border-radius:4px;padding:3px 7px;font-size:11px;color:var(--muted);font-family:'Inter',sans-serif}
+
+#idx{position:fixed;inset:0;background:rgba(21,16,42,.97);z-index:2000;display:none;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+#idx.open{display:flex}
+.idxg{display:grid;grid-template-columns:repeat(4,200px);gap:9px;margin-top:14px}
+.idxi{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:13px 15px;cursor:pointer;transition:all .2s}
+.idxi:hover{background:rgba(255,90,54,.22);border-color:rgba(255,90,54,.5)}
+.idxn{font-size:11px;color:#FF9B7D;font-weight:700;margin-bottom:4px}
+.idxt{font-size:12.5px;color:rgba(255,255,255,.82);font-weight:500;line-height:1.35}
+
+.anim{opacity:0;transform:translateY(16px);transition:opacity .45s ease,transform .45s ease}
+.anim.in{opacity:1;transform:translateY(0)}
+
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--coral)}
+.slide.dark .eyebrow{color:#FF9B7D}
+.htitle{font-family:'Fraunces',serif;font-weight:600;font-size:52px;line-height:1.08;margin:14px 0 12px;color:var(--ink)}
+.slide.dark .htitle{color:#F8F4EC}
+.htitle b{color:var(--coral);font-weight:600}
+.slide.dark .htitle b{color:#FF9B7D}
+.sub{font-weight:400;font-size:19px;color:var(--muted);line-height:1.62;max-width:700px}
+.slide.dark .sub{color:rgba(243,238,228,.72)}
+
+.tag{display:inline-block;padding:7px 16px;border-radius:20px;font-size:12.5px;font-weight:700;letter-spacing:.4px}
+.tag-coral{background:var(--coral-lt);color:#B8330E}
+.tag-teal{background:var(--teal-lt);color:#036B57}
+.tag-gold{background:var(--gold-lt);color:#5B21B6}
+.tag-pink{background:var(--pink-lt);color:#A3145A}
+
+.card{background:var(--paper);border:2px solid var(--line);border-radius:16px;padding:20px 22px}
+.row{display:flex;gap:16px;width:100%}
+.col{flex:1}
+
+.chip{display:inline-flex;align-items:center;justify-content:center;padding:9px 16px;border-radius:10px;font-size:15px;font-weight:700;background:var(--gold-lt);color:#5B21B6;border:2px solid rgba(124,58,237,.3);margin:3px;cursor:default;transition:transform .15s}
+.chip.fill{background:var(--coral);color:#fff;border-color:var(--coral)}
+.deskbox{border:3px dashed rgba(0,0,0,.15);border-radius:16px;padding:16px;min-height:160px;display:flex;flex-wrap:wrap;align-content:flex-start;gap:5px;width:100%;position:relative}
+.deskbox.full{border-color:var(--coral);background:var(--coral-lt)}
+
+.quizbtn{display:block;width:100%;text-align:left;background:var(--paper);border:2px solid var(--line);border-radius:12px;padding:14px 18px;font-size:16px;font-family:'Inter',sans-serif;font-weight:500;color:var(--ink);cursor:pointer;margin-bottom:9px;transition:all .15s}
+.quizbtn:hover{border-color:var(--coral)}
+.quizbtn.correct{background:var(--teal-lt);border-color:var(--teal);color:#036B57}
+.quizbtn.wrong{background:var(--coral-lt);border-color:var(--coral);color:#B8330E;opacity:.75}
+.quizfb{font-size:15px;color:var(--teal);font-weight:700;margin-top:8px;min-height:20px}
+
+.insight{background:var(--teal-lt);border-left:5px solid var(--teal);border-radius:10px;padding:13px 18px;font-size:15.5px;color:#036B57;line-height:1.55;margin-top:12px;font-weight:500}
+
+.compare{display:flex;gap:18px;width:100%}
+.cbox{flex:1;border-radius:16px;padding:20px 22px}
+.cbox.no{background:rgba(255,90,54,.09);border:2.5px solid rgba(255,90,54,.4)}
+.cbox.yes{background:rgba(0,163,136,.09);border:2.5px solid rgba(0,163,136,.4)}
+.cbox h4{font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.cbox.no h4{color:var(--coral)} .cbox.yes h4{color:var(--teal)}
+.cbox li{font-size:15.5px;line-height:1.6;margin-bottom:6px;list-style:none}
+
+.orb{position:absolute;border-radius:50%;pointer-events:none}
+
+.decisiongrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;width:100%;margin-top:12px}
+.dcard{background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:18px}
+.dcard h5{font-size:15.5px;font-weight:800;margin-bottom:8px;color:var(--ink)}
+.dcard p{font-size:14px;color:var(--muted);line-height:1.5}
+
+/* nested context boxes */
+.nest{border-radius:26px;border:3px solid var(--ink);display:flex;align-items:flex-start;justify-content:center;padding-top:18px;position:relative;transition:all .4s ease}
+.nestlabel{position:absolute;top:14px;left:50%;transform:translateX(-50%);font-size:13px;font-weight:800;color:var(--muted);white-space:nowrap}
+.nestcore{background:var(--coral);color:#fff;border-radius:14px;padding:14px 22px;font-weight:700;font-size:16px;box-shadow:0 4px 0 rgba(0,0,0,.12)}
+
+/* big icon tiles */
+.tile{background:var(--paper);border:2px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px}
+.tile .ico{font-size:40px}
+.tile h5{font-size:16px;font-weight:800}
+.tile p{font-size:13.5px;color:var(--muted);line-height:1.5}
+
+.hub{width:110px;height:110px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;text-align:center;box-shadow:0 6px 0 rgba(0,0,0,.12)}
+.hub.sub{background:var(--pink);width:88px;height:88px;font-size:13px}
+.spoke{width:70px;height:2px;background:var(--line)}
+.tile{color:var(--ink)}
+.tile p{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div id="pgbar"><div id="pgfill" style="width:6.25%"></div></div>
+<div id="kbh">
+  <span class="kbd">← →</span><span class="kbd">espacio</span><span class="kbd">R reiniciar</span><span class="kbd">I índice</span>
+</div>
+<div id="idx">
+  <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Navegar a</div>
+  <div class="idxg" id="idxg"></div>
+  <div style="margin-top:18px;font-size:11px;color:rgba(255,255,255,.3)">ESC o I para cerrar</div>
+</div>
+
+<div id="deck">
+
+<section class="slide dark" id="s1" data-title="Portada">
+  <div class="orb" style="width:460px;height:460px;right:-110px;top:-140px;background:rgba(255,90,54,.18)"></div>
+  <div class="orb" style="width:300px;height:300px;left:-90px;bottom:-110px;background:rgba(124,58,237,.2)"></div>
+  <div class="eyebrow anim" data-step="0">Capacitación en cuatro sesiones</div>
+  <h1 class="htitle anim" data-step="1" style="font-size:60px">Inteligencia Artificial,<br><b>explicada sin tecnicismos</b></h1>
+  <p class="sub anim" data-step="2" style="max-width:600px">Un recorrido pensado para quien decide y coordina equipos, no para quien programa. Cada concepto se entiende con una comparación de la vida y el trabajo diario, sin una sola línea de código.</p>
+</section>
+
+<section class="slide" id="s2" data-title="Las cuatro sesiones">
+  <div class="eyebrow anim" data-step="0">La ruta completa</div>
+  <h2 class="htitle anim" data-step="1">Cuatro sesiones, <b>de lo básico a lo estratégico</b></h2>
+  <div class="row anim" data-step="2" style="margin-top:12px">
+    <div class="col card"><div class="tag tag-coral">Sesión 1</div><h4 style="margin-top:12px;font-size:17px">Cómo "piensa" la IA</h4><p style="font-size:14px;color:var(--muted);margin-top:7px;line-height:1.5">Qué es, qué es un token, un prompt, el contexto y su límite.</p></div>
+    <div class="col card"><div class="tag tag-teal">Sesión 2</div><h4 style="margin-top:12px;font-size:17px">Memoria y errores</h4><p style="font-size:14px;color:var(--muted);margin-top:7px;line-height:1.5">Por qué no aprende sola, qué es la memoria de una herramienta y qué es una alucinación.</p></div>
+    <div class="col card"><div class="tag tag-gold">Sesión 3</div><h4 style="margin-top:12px;font-size:17px">Cómo se conecta y actúa</h4><p style="font-size:14px;color:var(--muted);margin-top:7px;line-height:1.5">Contexto, buscar información propia, conectarse a herramientas, skills y agentes.</p></div>
+    <div class="col card"><div class="tag tag-pink">Sesión 4</div><h4 style="margin-top:12px;font-size:17px">Personalizar y decidir</h4><p style="font-size:14px;color:var(--muted);margin-top:7px;line-height:1.5">Formas de especializarla, sus costos y los riesgos que hay que gobernar.</p></div>
+  </div>
+  <div class="insight anim" data-step="3">Cada sesión dura entre 60 y 90 minutos e incluye un ejercicio en vivo — el objetivo no es memorizar términos, es construir un criterio propio.</div>
+</section>
+
+<section class="slide" id="s3" data-title="Sesión 1 · Qué hace la IA">
+  <div class="tag tag-coral anim" data-step="0">Sesión 1 · Fundamentos</div>
+  <h2 class="htitle anim" data-step="1">No "sabe" cosas.<br>Es un <b>excelente adivinador</b></h2>
+  <p class="sub anim" data-step="2">Piense en la función de autocompletado del teclado de su celular, pero llevada a un nivel extremo: fue entrenada leyendo una fracción enorme de todo lo escrito en internet, y su única tarea es predecir cuál es la palabra más probable que sigue, una y otra vez, hasta formar una respuesta completa.</p>
+  <div class="compare anim" data-step="3">
+    <div class="cbox no"><h4>No es esto</h4>
+      <li>Una base de datos que "busca" la respuesta correcta</li>
+      <li>Alguien razonando paso a paso como una persona</li>
+    </div>
+    <div class="cbox yes"><h4>Es esto</h4>
+      <li>Un motor de predicción entrenado con muchísimo texto</li>
+      <li>Convincente por estadística, no por certeza</li>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s4" data-title="Sesión 1 · Qué es un token">
+  <div class="tag tag-coral anim" data-step="0">Sesión 1 · Fundamentos</div>
+  <h2 class="htitle anim" data-step="1">El <b>token</b>: la ficha con la que juega</h2>
+  <p class="sub anim" data-step="2">Nosotros tampoco procesamos letra por letra sin contexto: la letra "A" sola no le dice nada, pero dentro de "Área" o de "S.A." cambia completamente de función y de peso. Nuestro cerebro agrupa letras en unidades con sentido según lo que las rodea. La IA hace algo parecido pero mecánico: corta el texto en pedazos — ni letras sueltas ni siempre palabras completas — llamados tokens.</p>
+  <div class="row anim" data-step="3" style="margin-top:8px;align-items:center">
+    <div class="col card" style="text-align:center">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:10px">La frase "reunión de directorio"</div>
+      <span class="chip">reuni</span><span class="chip">ón</span><span class="chip">de</span><span class="chip">direc</span><span class="chip">torio</span>
+      <div style="font-size:12.5px;color:var(--muted);margin-top:12px">= 5 fichas (tokens), no 3 palabras</div>
+    </div>
+    <div class="col card">
+      <div style="font-size:15px;line-height:1.6"><b>¿Por qué le importa a usted?</b><br><span style="color:var(--muted);font-size:14px">Muchas herramientas de IA cobran o limitan por cantidad de fichas procesadas — es la unidad real detrás de "cuánto cuesta" o "cuánto puede leer" una IA en un momento dado.</span></div>
+    </div>
+  </div>
+  <div class="anim" data-step="4" style="width:100%;margin-top:6px">
+    <div class="card" style="display:flex;align-items:center;gap:16px;padding:16px 20px">
+      <div style="font-size:26px">🔎</div>
+      <div style="font-size:14px;color:var(--muted);line-height:1.5"><b style="color:var(--ink)">Ejercicio en vivo:</b> abran juntos <a href="https://www.claudetokenizer.com/" target="_blank" style="color:var(--coral);font-weight:700">claudetokenizer.com</a> y prueben con una frase real de su equipo — verán en qué fichas se parte, y cómo cambia según el contexto de la palabra.</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s5" data-title="Sesión 1 · El contexto se acumula">
+  <div class="tag tag-coral anim" data-step="0">Sesión 1 · Fundamentos</div>
+  <h2 class="htitle anim" data-step="1">Cada mensaje <b>se suma</b>, no se aprende</h2>
+  <p class="sub anim" data-step="2" style="margin-bottom:4px">El prompt es la instrucción de este momento. El contexto es la caja donde se va guardando todo lo dicho en la conversación: cada mensaje nuevo entra dentro de la caja anterior, sin borrar la de adentro — pero es una caja de esta conversación, no un recuerdo permanente de usted como persona.</p>
+  <div class="row anim" data-step="3" style="align-items:center;gap:26px;margin-top:8px">
+    <div class="col" style="flex:0 0 380px;display:flex;justify-content:center">
+      <div class="nest" style="width:340px;height:230px;background:var(--coral-lt);border-color:var(--coral)">
+        <div class="nestlabel" style="color:#B8330E">Mensaje 3</div>
+        <div class="nest" style="width:250px;height:150px;margin-top:26px;background:var(--gold-lt);border-color:var(--gold)">
+          <div class="nestlabel" style="color:#5B21B6">Mensaje 2</div>
+          <div class="nestcore" style="margin-top:26px">Mensaje 1</div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card" style="margin-bottom:10px"><b style="font-size:15px">Lo que SÍ pasa</b><p style="font-size:14px;color:var(--muted);margin-top:6px;line-height:1.5">Cada mensaje se apila dentro de la misma caja (el contexto de esta conversación) para que la IA responda coherente con todo lo dicho hasta ahora.</p></div>
+      <div class="card"><b style="font-size:15px">Lo que NO pasa</b><p style="font-size:14px;color:var(--muted);margin-top:6px;line-height:1.5">La IA no guarda esa caja como conocimiento suyo para siempre, ni "aprende" datos de usted como persona — al cerrar la conversación, esa caja específica desaparece.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s6" data-title="Sesión 1 · Ventana de contexto — ejercicio">
+  <div class="tag tag-coral anim" data-step="0">Sesión 1 · Ejercicio interactivo</div>
+  <h2 class="htitle anim" data-step="1">La caja <b>tiene un límite</b></h2>
+  <p class="sub anim" data-step="2" style="margin-bottom:8px">Esa caja (la ventana de contexto) no es infinita — en este ejemplo, solo caben <b>4 elementos a la vez</b>. Haga clic en cada uno para agregarlo: al llegar al quinto, el primero que entró se cae para hacerle espacio.</p>
+  <div class="row anim" data-step="3" style="gap:24px;align-items:flex-start">
+    <div class="col" style="flex:0 0 240px">
+      <div class="chip" onclick="addToDesk(this)">📄 Instrucción inicial</div>
+      <div class="chip" onclick="addToDesk(this)">📊 Reporte adjunto</div>
+      <div class="chip" onclick="addToDesk(this)">💬 Pregunta 1</div>
+      <div class="chip" onclick="addToDesk(this)">💬 Pregunta 2</div>
+      <div class="chip" onclick="addToDesk(this)">💬 Pregunta 3</div>
+      <div class="chip" onclick="addToDesk(this)">📎 Otro documento</div>
+    </div>
+    <div class="col">
+      <div class="deskbox" id="desk"></div>
+      <div id="deskmsg" style="font-size:14px;color:var(--coral);margin-top:8px;font-weight:700;min-height:18px"></div>
+    </div>
+  </div>
+  <div class="insight anim" data-step="4">Por eso una conversación muy larga "se le olvida" el inicio: no es mala memoria, es que la caja ya no tiene espacio.</div>
+</section>
+
+<section class="slide dark" id="s7" data-title="Sesión 2 · La IA no aprende de usted">
+  <div class="tag tag-teal anim" data-step="0">Sesión 2 · Memoria y errores</div>
+  <h2 class="htitle anim" data-step="1">La IA <b>no aprende</b> de su conversación</h2>
+  <p class="sub anim" data-step="2">Este es el malentendido más común. El modelo detrás de la IA no cambia ni un poco por lo que usted le cuenta hoy — es como hablar con un experto que tiene el conocimiento congelado desde el día en que terminó su formación. Entonces, ¿qué es esa "memoria" que algunas herramientas ofrecen? Es simple: <b>es la herramienta, no el modelo</b>, la que guarda un resumen corto de la conversación en un espacio propio de su cuenta — y se lo vuelve a mostrar al modelo la próxima vez, como quien le entrega una hoja de apuntes a un experto nuevo antes de empezar.</p>
+  <div class="compare anim" data-step="3">
+    <div class="cbox no"><h4>Lo que no pasa</h4>
+      <li>El modelo "graba" lo que usted le dijo dentro de sí mismo</li>
+      <li>Ese conocimiento se mezcla con el de otros usuarios</li>
+    </div>
+    <div class="cbox yes"><h4>Lo que sí pasa</h4>
+      <li>La herramienta guarda un resumen en un espacio propio de su cuenta</li>
+      <li>Sin ese resumen guardado aparte, cada conversación empieza de cero</li>
+    </div>
+  </div>
+  <div class="insight anim" data-step="4">Ese resumen queda dentro de la herramienta que su empresa aprobó, bajo sus políticas de seguridad — no es que el modelo de IA "se quede" con su información ni la use para entrenar a otros usuarios.</div>
+</section>
+
+<section class="slide" id="s8" data-title="Sesión 2 · Alucinación — ejercicio">
+  <div class="tag tag-teal anim" data-step="0">Sesión 2 · Ejercicio interactivo</div>
+  <h2 class="htitle anim" data-step="1">Cuando <b>inventa con total seguridad</b></h2>
+  <p class="sub anim" data-step="2">Como la IA solo predice qué palabra sigue, a veces "rellena" un vacío de información con algo que suena correcto pero es falso — sin ninguna señal de duda en el tono. A esto se le llama alucinación. Es como un colaborador que, para no quedar mal en una reunión, responde con seguridad una cifra que en realidad no verificó.</p>
+  <div class="anim" data-step="3" style="width:100%;max-width:680px">
+    <div style="font-size:15px;color:var(--ink);font-weight:700;margin-bottom:4px">Pregunta: usted NO le compartió a la IA ningún dato del cliente. ¿Cuál de estas 3 respuestas es la inventada?</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:12px">Pista: la alucinación suena igual de segura que las demás — pero da un dato exacto que nadie le dio.</div>
+    <button class="quizbtn" data-correct="false" onclick="checkQuiz(this)">A) "No tengo información sobre ese cliente todavía — ¿me puede dar más contexto?"</button>
+    <button class="quizbtn" data-correct="true" onclick="checkQuiz(this)">B) "Este cliente trabaja con nosotros desde 2014 y su satisfacción promedio histórica es 94.2%."</button>
+    <button class="quizbtn" data-correct="false" onclick="checkQuiz(this)">C) "Puedo ayudarle a redactar el correo de seguimiento, pero antes dígame qué le quiere comunicar al cliente."</button>
+    <div class="quizfb" id="qfb"></div>
+  </div>
+</section>
+
+<section class="slide" id="s9" data-title="Sesión 3 · Alimentar con contexto">
+  <div class="tag tag-gold anim" data-step="0">Sesión 3 · Cómo se extiende la IA</div>
+  <h2 class="htitle anim" data-step="1">No sabe nada de su empresa — <b>hasta que usted se lo da</b></h2>
+  <p class="sub anim" data-step="2">Retomando la sesión 1: el contexto es la "caja" de esa conversación. El modelo por sí solo conoce lo que aprendió en su entrenamiento general — nada de los documentos internos de su empresa. Pero esa caja se puede alimentar deliberadamente con distintos tipos de contexto.</p>
+  <div class="row anim" data-step="3">
+    <div class="col card"><div class="tag tag-teal">Contexto manual</div><p style="font-size:14px;margin-top:10px;color:var(--muted);line-height:1.5">Usted mismo pega o adjunta el documento en la conversación.</p></div>
+    <div class="col card"><div class="tag tag-gold">Contexto por búsqueda</div><p style="font-size:14px;margin-top:10px;color:var(--muted);line-height:1.5">El sistema busca solo el fragmento relevante entre los documentos de la organización, y se lo entrega a la IA.</p></div>
+    <div class="col card"><div class="tag tag-pink">Contexto persistente ("la libreta")</div><p style="font-size:14px;margin-top:10px;color:var(--muted);line-height:1.5"><b>Ejemplo:</b> ayer le pidió que sus correos fueran formales; hoy ya lo hace sin que usted lo repita, porque la herramienta guardó esa nota en su cuenta y se la vuelve a mostrar cada vez.</p></div>
+  </div>
+  <div class="insight anim" data-step="4">Es la diferencia entre preguntarle a un consultor externo genérico y a uno que primero abrió su carpeta de casos. Y sobre la seguridad: esa "libreta" vive dentro de su cuenta, en la herramienta que la empresa aprobó — no es que el modelo de IA se está quedando con su información ni la comparte con otros usuarios.</div>
+</section>
+
+<section class="slide" id="s10" data-title="Sesión 3 · MCP">
+  <div class="tag tag-gold anim" data-step="0">Sesión 3 · Cómo se extiende la IA</div>
+  <h2 class="htitle anim" data-step="1">El <b>adaptador universal de viaje</b></h2>
+  <p class="sub anim" data-step="2">Cuando usted viaja a otro país, no compra un cargador distinto para cada enchufe — compra un adaptador universal y ya se conecta a todo. Existe un estándar equivalente para que una IA se conecte a distintos sistemas de la empresa sin construir cada conexión a mano y por separado. Ese estándar tiene un nombre: <b>MCP</b>. No necesita memorizar qué significa la sigla — solo reconocer que, cuando alguien lo mencione, se refiere exactamente a este adaptador.</p>
+  <div class="anim" data-step="3" style="display:flex;align-items:center;justify-content:center;gap:0;width:100%;margin-top:10px">
+    <div class="card" style="text-align:center;padding:24px 28px;font-weight:800;font-size:16px">IA</div>
+    <div style="width:60px;height:3px;background:var(--gold)"></div>
+    <div class="card" style="text-align:center;padding:16px 20px;background:var(--gold-lt);border-color:var(--gold)"><b>MCP</b><br><span style="font-size:12.5px;color:var(--muted)">el adaptador — estándar común</span></div>
+    <div style="width:60px;height:3px;background:var(--gold)"></div>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <div class="card" style="padding:9px 16px;font-size:14px">📅 Calendario</div>
+      <div class="card" style="padding:9px 16px;font-size:14px">🗂️ Sistema de tickets</div>
+      <div class="card" style="padding:9px 16px;font-size:14px">📁 Repositorio de documentos</div>
+    </div>
+  </div>
+  <div class="insight anim" data-step="4">La próxima vez que escuche "MCP" en una reunión, ya sabe que están hablando de este adaptador — no de una herramienta más, sino del conector que hace posible que la IA use todas las demás.</div>
+</section>
+
+<section class="slide" id="s11" data-title="Sesión 3 · Prompt vs. skill">
+  <div class="tag tag-pink anim" data-step="0">Sesión 3 · Cómo se extiende la IA</div>
+  <h2 class="htitle anim" data-step="1">Prompt improvisado <b>vs. receta guardada</b></h2>
+  <div class="row anim" data-step="2" style="gap:20px;align-items:stretch">
+    <div class="tile" style="flex:1">
+      <div class="ico">✍️</div>
+      <h5>Prompt</h5>
+      <p>Una instrucción que usted escribe cada vez, de cero, para una tarea puntual. Si mañana la vuelve a necesitar, la vuelve a redactar.</p>
+    </div>
+    <div style="display:flex;align-items:center;font-size:30px;color:var(--muted)">→</div>
+    <div class="tile" style="flex:1;border-color:var(--gold);background:var(--gold-lt)">
+      <div class="ico">📦</div>
+      <h5>Skill</h5>
+      <p>Ese mismo procedimiento, ya escrito, probado y empaquetado una sola vez — listo para usarse cuantas veces haga falta, igual todas las veces.</p>
+    </div>
+  </div>
+  <div class="insight anim" data-step="3">Analogía simple: el prompt es improvisar la receta cada vez que cocina; el skill es la receta ya escrita, guardada en la carpeta de la cocina, lista para seguir sin pensarla de nuevo.</div>
+  <div class="anim" data-step="4" style="width:100%;margin-top:10px">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:8px;font-weight:600">Ejemplos de skills que un equipo podría empaquetar:</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <div class="chip">📊 Presentación estandarizada de resultados</div>
+      <div class="chip">📝 Minuta de reunión con compromisos</div>
+      <div class="chip">📅 Reporte de estado semanal</div>
+      <div class="chip">💰 Estimación de presupuesto</div>
+      <div class="chip">📩 Respuesta a solicitud de propuesta (RFP)</div>
+      <div class="chip">📋 Checklist de cierre de un caso</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s12" data-title="Sesión 3 · Cuándo un prompt se vuelve skill">
+  <div class="tag tag-pink anim" data-step="0">Sesión 3 · Cómo se extiende la IA</div>
+  <h2 class="htitle anim" data-step="1">¿Cuándo conviene <b>empaquetarlo</b>?</h2>
+  <p class="sub anim" data-step="2" style="margin-bottom:6px">Cuando nota que está escribiendo la misma instrucción, con la misma estructura, una y otra vez — ahí es momento de convertirla en un skill.</p>
+  <div class="row anim" data-step="3" style="align-items:center;gap:10px">
+    <div class="tile" style="flex:1"><div class="ico">✍️</div><p style="font-weight:700;color:var(--ink)">Lunes</p><p>"Resume las novedades del proyecto para el comité..."</p></div>
+    <div class="tile" style="flex:1"><div class="ico">✍️</div><p style="font-weight:700;color:var(--ink)">Miércoles</p><p>Casi la misma instrucción, reescrita de nuevo</p></div>
+    <div class="tile" style="flex:1"><div class="ico">✍️</div><p style="font-weight:700;color:var(--ink)">Viernes</p><p>Otra vez, con pequeños cambios</p></div>
+    <div style="font-size:26px;color:var(--muted)">→</div>
+    <div class="tile" style="flex:1;border-color:var(--gold);background:var(--gold-lt)"><div class="ico">📦</div><p style="font-weight:800;color:#5B21B6">Skill "Reporte semanal"</p><p>Un solo procedimiento fijo, mismo resultado consistente, cualquiera del equipo lo usa igual.</p></div>
+  </div>
+  <div class="insight anim" data-step="4">Ventaja de negocio: consistencia entre personas del equipo, menos tiempo redactando lo mismo, y control sobre cómo se hace esa tarea.</div>
+</section>
+
+<section class="slide dark" id="s13" data-title="Sesión 3 · Qué es un agente">
+  <div class="tag tag-pink anim" data-step="0">Sesión 3 · Cómo se extiende la IA</div>
+  <h2 class="htitle anim" data-step="1">El agente: <b>quien decide qué receta usar</b></h2>
+  <p class="sub anim" data-step="2">Un agente es una IA a la que se le da un objetivo — no una receta puntual — y ella misma decide cuál de sus skills usar, en qué orden, y las ejecuta. Pero un agente puede ir un paso más allá: si la tarea lo requiere, puede <b>llamar a otro agente especializado</b> para que resuelva su parte, igual que un jefe de equipo que deriva un tema a otro equipo experto.</p>
+  <div class="anim" data-step="3" style="display:flex;align-items:center;justify-content:center;gap:30px;width:100%;margin-top:12px">
+    <div class="hub">Agente de<br>Atención</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:8px"><div class="spoke"></div><div class="tile" style="padding:10px 14px;flex-direction:row;gap:8px"><span style="font-size:18px">📦</span><span style="font-size:12.5px;font-weight:700">Skill: redactar respuesta</span></div></div>
+      <div style="display:flex;align-items:center;gap:8px"><div class="spoke"></div><div class="tile" style="padding:10px 14px;flex-direction:row;gap:8px"><span style="font-size:18px">📦</span><span style="font-size:12.5px;font-weight:700">Skill: consultar historial</span></div></div>
+      <div style="display:flex;align-items:center;gap:8px"><div class="spoke" style="background:var(--pink)"></div><div class="hub sub">Agente<br>Legal</div></div>
+    </div>
+  </div>
+  <div class="insight anim" data-step="4" style="background:rgba(0,163,136,.18);color:#8FE9D3"><b>Ejemplo:</b> el Agente de Atención recibe un reclamo. Usa sus propias skills para redactar la respuesta y revisar el historial — pero si detecta que el caso implica una cláusula contractual, le pasa esa parte al Agente Legal (especializado en ese tema) antes de responder al cliente.</div>
+</section>
+
+<section class="slide" id="s14" data-title="Sesión 4 · Tres formas de especializar">
+  <div class="tag tag-coral anim" data-step="0">Sesión 4 · Personalizar y decidir</div>
+  <h2 class="htitle anim" data-step="1">Tres formas de <b>"capacitar" a la IA</b></h2>
+  <p class="sub anim" data-step="2">Un mismo caso para las tres: quiere que la IA atienda consultas de clientes sobre sus productos. Piense en tres formas distintas de preparar a un empleado nuevo para ese mismo rol — elegir la correcta es una decisión de costo y tiempo, no solo técnica.</p>
+  <div class="row anim" data-step="3">
+    <div class="col card"><div class="tag tag-gold">Darle instrucciones claras</div><p style="font-size:14px;margin-top:10px;color:var(--muted);line-height:1.5"><b>Ej.:</b> "Responde siempre en tono cordial, en menos de 100 palabras, y ofrece escalar a un asesor si el cliente insiste." Rápido y barato — la primera opción a probar siempre.</p></div>
+    <div class="col card"><div class="tag tag-teal">Darle acceso a la carpeta correcta</div><p style="font-size:14px;margin-top:10px;color:var(--muted);line-height:1.5"><b>Ej.:</b> darle el catálogo real de productos y la política vigente de devoluciones, para que responda con datos exactos de la empresa. Lo visto en la sesión anterior.</p></div>
+    <div class="col card"><div class="tag tag-pink">Meses de entrenamiento a la medida</div><p style="font-size:14px;margin-top:10px;color:var(--muted);line-height:1.5"><b>Ej.:</b> entrenarla varios meses con miles de conversaciones reales de soporte, para que replique el estilo exacto de la marca. Solo cuando de verdad se necesita un experto distinto de fábrica.</p></div>
+  </div>
+  <div class="insight anim" data-step="4">Este tercer camino (fine-tuning) existe y tiene nombre técnico, pero casi nunca es la primera opción: es lento, caro y rígido — se recurre a él solo cuando las dos primeras ya no alcanzan.</div>
+</section>
+
+<section class="slide dark" id="s15" data-title="Sesión 4 · Costos y riesgos">
+  <div class="tag tag-teal anim" data-step="0">Sesión 4 · Personalizar y decidir</div>
+  <h2 class="htitle anim" data-step="1">Lo que <b>nadie le explica de entrada</b></h2>
+  <div class="row anim" data-step="2">
+    <div class="col card" style="background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)"><h4 style="font-size:15px;margin-bottom:10px;color:#FF9B7D">Sobre el costo</h4><p style="font-size:14px;color:rgba(243,238,228,.75);line-height:1.6">Mientras más grande la "caja" (contexto) que le da a la IA, más tarda y más cuesta cada respuesta.</p></div>
+    <div class="col card" style="background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)"><h4 style="font-size:15px;margin-bottom:10px;color:#FF9B7D">Sobre el riesgo</h4><p style="font-size:14px;color:rgba(243,238,228,.75);line-height:1.6">Nunca comparta información confidencial en una herramienta no aprobada por la organización, y valide siempre antes de actuar — recuerde la sesión 2.</p></div>
+  </div>
+  <div class="insight anim" data-step="3" style="background:rgba(0,163,136,.2);color:#8FE9D3">Regla simple para su equipo: entre más importante o sensible la decisión, mayor debe ser la revisión humana antes de ejecutarla.</div>
+</section>
+
+<section class="slide" id="s16" data-title="Cierre · Mapa de decisión">
+  <div class="eyebrow anim" data-step="0">Cierre</div>
+  <h2 class="htitle anim" data-step="1">Antes de usar IA para algo, <b>pregúntese esto</b></h2>
+  <div class="decisiongrid anim" data-step="2">
+    <div class="dcard"><h5>¿Es solo una pregunta puntual?</h5><p>Un buen prompt claro, sin nada más, suele bastar.</p></div>
+    <div class="dcard"><h5>¿Se repite siempre igual?</h5><p>Conviene empaquetarlo como skill para que todo el equipo obtenga el mismo resultado.</p></div>
+    <div class="dcard"><h5>¿Necesita decidir y ejecutar varios pasos?</h5><p>Ahí habla de un agente orquestando varios skills — y de definir qué puede hacer solo.</p></div>
+  </div>
+  <div class="insight anim" data-step="3">El error más común no es usar poco la IA — es pedirle algo mal definido y confiar en la respuesta sin revisarla. El resto son detalles de implementación.</div>
+</section>
+
+</div>
+
+<div id="ctrl">
+  <button class="cbtn" id="bprev"><svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg>Anterior</button>
+  <div class="cdiv"></div>
+  <span id="cnt">1 / 16</span>
+  <div class="cdiv"></div>
+  <button class="cbtn" id="banim"><svg viewBox="0 0 16 16"><path d="M5 3l8 5-8 5V3z"/></svg>Animar</button>
+  <div class="cdiv"></div>
+  <button class="cbtn" id="breset"><svg viewBox="0 0 16 16"><path d="M2 8a6 6 0 1 1 1.5 4M2 12V8h4"/></svg>Reiniciar</button>
+  <div class="cdiv"></div>
+  <button class="cbtn" id="bnext">Siguiente<svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5"/></svg></button>
+  <div class="cdiv"></div>
+  <button class="cbtn" id="bidx"><svg viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12"/></svg>Índice</button>
+</div>
+
+<script>
+const slides=document.querySelectorAll('.slide');
+const total=slides.length;
+let cur=0,step=0;
+const titles=['Portada','Las cuatro sesiones','Qué hace la IA','Qué es un token','El contexto se acumula','Ventana de contexto (ejercicio)','La IA no aprende de usted','Alucinación (ejercicio)','Alimentar con contexto','El adaptador universal (MCP)','Prompt vs. skill','Cuándo un prompt se vuelve skill','Qué es un agente','Tres formas de especializar','Costos y riesgos','Cierre: mapa de decisión'];
+
+function getA(sl){return [...sl.querySelectorAll('[data-step]')].sort((a,b)=>+a.dataset.step - +b.dataset.step)}
+function resetA(){getA(slides[cur]).forEach(el=>el.classList.remove('in'));step=0}
+function playAll(){const e=getA(slides[cur]);e.forEach((el,i)=>setTimeout(()=>el.classList.add('in'),i*70));step=e.length;}
+function playNext(){const e=getA(slides[cur]);if(step<e.length){e[step].classList.add('in');step++;return true}return false;}
+function go(idx,ra){
+  slides[cur].classList.remove('active');
+  cur=(idx+total)%total;
+  slides[cur].classList.add('active');
+  step=0;
+  if(ra!==false)resetA();
+  document.getElementById('cnt').textContent=`${cur+1} / ${total}`;
+  document.getElementById('pgfill').style.width=`${((cur+1)/total)*100}%`;
+  setTimeout(()=>playAll(),120);
+}
+go(0,false);
+getA(slides[0]).forEach(el=>el.classList.add('in'));
+step=getA(slides[0]).length;
+
+document.getElementById('bprev').addEventListener('click',()=>go(cur-1));
+document.getElementById('bnext').addEventListener('click',()=>go(cur+1));
+document.getElementById('banim').addEventListener('click',()=>{if(!playNext())go(cur+1)});
+document.getElementById('breset').addEventListener('click',()=>{resetA();setTimeout(()=>{getA(slides[cur])[0]?.classList.add('in');step=1},50)});
+document.getElementById('bidx').addEventListener('click',()=>document.getElementById('idx').classList.toggle('open'));
+
+const idxg=document.getElementById('idxg');
+titles.forEach((t,i)=>{
+  const el=document.createElement('div');
+  el.className='idxi';
+  el.innerHTML=`<div class="idxn">${String(i+1).padStart(2,'0')}</div><div class="idxt">${t}</div>`;
+  el.addEventListener('click',()=>{document.getElementById('idx').classList.remove('open');go(i)});
+  idxg.appendChild(el);
+});
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')go(cur+1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')go(cur-1);
+  if(e.key===' '){e.preventDefault();if(!playNext())go(cur+1)}
+  if(e.key==='r'||e.key==='R'){resetA();setTimeout(()=>{getA(slides[cur])[0]?.classList.add('in');step=1},50)}
+  if(e.key==='i'||e.key==='I')document.getElementById('idx').classList.toggle('open');
+  if(e.key==='Escape')document.getElementById('idx').classList.remove('open');
+});
+
+/* Ejercicio: caja de contexto (cupo máximo 4) */
+let deskItems=[];
+function addToDesk(el){
+  deskItems.push(el.textContent);
+  let fell=false;
+  if(deskItems.length>4){ deskItems.shift(); fell=true; }
+  const desk=document.getElementById('desk');
+  const msg=document.getElementById('deskmsg');
+  desk.innerHTML='';
+  deskItems.forEach(t=>{
+    const c=document.createElement('div');
+    c.className='chip fill';
+    c.textContent=t;
+    desk.appendChild(c);
+  });
+  if(fell){
+    desk.classList.add('full');
+    msg.textContent='La caja solo tiene espacio para 4 — el elemento más antiguo se cayó para que entrara el nuevo.';
+  } else {
+    desk.classList.remove('full');
+    msg.textContent='';
+  }
+}
+
+/* Ejercicio: quiz alucinación — siempre revela la correcta */
+function checkQuiz(clicked){
+  const btns=document.querySelectorAll('.quizbtn');
+  const clickedCorrect=clicked.dataset.correct==='true';
+  btns.forEach(b=>{
+    b.disabled=true;
+    if(b.dataset.correct==='true'){ b.classList.add('correct'); }
+    else if(b===clicked){ b.classList.add('wrong'); }
+  });
+  document.getElementById('qfb').textContent = clickedCorrect
+    ? 'Correcto — la B da una cifra exacta y muy específica sin que nadie se la haya dado: esa es la señal clásica de una alucinación.'
+    : 'Esa opción es honesta (reconoce que no tiene el dato). La alucinación es la B: una cifra muy exacta, dicha con total seguridad, que nadie le proporcionó.';
+}
+</script>
+</body>
+</html>
