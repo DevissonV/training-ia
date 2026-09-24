@@ -324,7 +324,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
 .cs-q{font-size:14px;color:rgba(243,238,228,.75);margin-bottom:10px}
 .cs-range{width:100%;accent-color:var(--coral);cursor:pointer}
 .cs-val{font-size:20px;font-weight:800;color:#F8F4EC;margin:8px 0 12px;min-height:28px}
-.cs-row{display:grid;grid-template-columns:150px 1fr 80px;gap:10px;align-items:center;font-size:13.5px;color:rgba(243,238,228,.8);margin-bottom:9px}
+.cs-row{display:grid;grid-template-columns:200px 1fr 80px;gap:10px;align-items:center;font-size:13.5px;color:rgba(243,238,228,.8);margin-bottom:9px}
 .cs-bg{height:12px;border-radius:6px;background:rgba(255,255,255,.1);overflow:hidden}
 .cs-bg i{display:block;height:100%;border-radius:6px;background:var(--coral);transition:width .4s ease}
 .cs-lvl{display:flex;gap:6px;margin-bottom:10px}
@@ -602,42 +602,42 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
 <section class="slide" id="s14" data-title="Sesión 4 · Tres formas de especializar">
   <div class="tag tag-coral anim" data-step="0">Sesión 4 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">Tres formas de <b>"capacitar" a la IA</b></h2>
-  <p class="sub anim" data-step="2" style="max-width:880px">Objetivo: que la IA atienda consultas de clientes. Arrastre cada necesidad a la forma de prepararla que corresponde (o haga clic en la necesidad y luego en la columna).</p>
+  <p class="sub anim" data-step="2" style="max-width:880px"><b>El caso:</b> su empresa va a poner una IA a responder preguntas de clientes, como si fuera un empleado nuevo de atención. El gerente hace <b>3 pedidos</b>: arrastre cada pedido a la forma de preparar a la IA que lo resuelve.</p>
   <div class="mt anim" data-step="3">
     <div class="mt-bank" id="mtBank"></div>
     <div class="mt-zones">
-      <div class="mt-zone" data-k="inst"><div class="tag tag-gold">Darle instrucciones claras</div><div class="mt-drop">Suelte aquí</div><div class="mt-meta"><span>💰 Costo: bajo</span><span>⏱️ Tiempo: minutos</span></div></div>
-      <div class="mt-zone" data-k="carp"><div class="tag tag-teal">Darle acceso a la carpeta correcta</div><div class="mt-drop">Suelte aquí</div><div class="mt-meta"><span>💰 Costo: medio</span><span>⏱️ Tiempo: días</span></div></div>
-      <div class="mt-zone" data-k="entr"><div class="tag tag-pink">Meses de entrenamiento a la medida</div><div class="mt-drop">Suelte aquí</div><div class="mt-meta"><span>💰 Costo: alto</span><span>⏱️ Tiempo: meses</span></div></div>
+      <div class="mt-zone" data-k="inst"><div class="tag tag-gold">1 · Darle instrucciones claras</div><div class="hint">🗒️ Como darle al empleado nuevo una nota con reglas</div><div class="mt-drop">Suelte aquí el pedido</div><div class="mt-meta"><span>💰 Costo: bajo</span><span>⏱️ Tiempo: minutos</span></div></div>
+      <div class="mt-zone" data-k="carp"><div class="tag tag-teal">2 · Darle acceso a la carpeta correcta</div><div class="hint">📚 Como entregarle el manual y el catálogo de la empresa</div><div class="mt-drop">Suelte aquí el pedido</div><div class="mt-meta"><span>💰 Costo: medio</span><span>⏱️ Tiempo: días</span></div></div>
+      <div class="mt-zone" data-k="entr"><div class="tag tag-pink">3 · Meses de entrenamiento a la medida</div><div class="hint">🎓 Como enviarlo meses a una escuela de la marca</div><div class="mt-drop">Suelte aquí el pedido</div><div class="mt-meta"><span>💰 Costo: alto</span><span>⏱️ Tiempo: meses</span></div></div>
     </div>
     <div class="mt-bar"><div class="mt-msg" id="mtMsg"></div><button class="ibtn ghost" onclick="mtReset()">Reiniciar</button></div>
   </div>
-  <div class="insight anim" data-step="4">El entrenamiento a la medida (fine-tuning) casi nunca es la primera opción: es lento, caro y rígido.</div>
+  <div class="insight anim" data-step="4">El entrenamiento a la medida (en inglés, <i>fine-tuning</i>) casi nunca es la primera opción: es lento, caro y difícil de cambiar después.</div>
   <aside class="notes"><p>Piense en tres formas distintas de preparar a un empleado nuevo para el mismo rol. Elegir la correcta es una decisión de costo y tiempo, no solo técnica.</p><p>Instrucciones claras: "Responde siempre cordial, en menos de 100 palabras, y ofrece escalar a un asesor". Rápido y barato: la primera opción a probar siempre.</p><p>Carpeta correcta: darle el catálogo real y la política vigente de devoluciones (lo visto en la sesión 3).</p><p>Entrenamiento a la medida: varios meses con miles de conversaciones reales para replicar el estilo exacto de la marca. Solo cuando las dos primeras ya no alcanzan.</p></aside>
 </section>
 
 <section class="slide dark" id="s15" data-title="Sesión 4 · Costos y riesgos">
   <div class="tag tag-teal anim" data-step="0">Sesión 4 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">Lo que <b>nadie le explica de entrada</b></h2>
-  <p class="sub anim" data-step="2">Mueva los dos controles.</p>
+  <p class="sub anim" data-step="2" style="max-width:880px">Dos preguntas que conviene hacerse antes de usar IA en su equipo. Mueva cada control de izquierda a derecha y vea qué cambia.</p>
   <div class="row anim" data-step="3" style="gap:18px">
     <div class="col cs-card">
-      <h4>Sobre el costo</h4>
-      <div class="cs-q">¿Qué tan grande es la caja (contexto) que le entrega a la IA?</div>
+      <h4>💰 Costo: más información, más tiempo y más dinero</h4>
+      <div class="cs-q">¿Cuánta información le entrega a la IA para leer cada vez que le pregunta algo?</div>
       <input type="range" min="1" max="5" value="1" class="cs-range" id="csSize" oninput="csRender()" onchange="this.blur()">
       <div class="cs-val" id="csVal"></div>
-      <div class="cs-row"><span>Tiempo de respuesta</span><div class="cs-bg"><i id="csT"></i></div><span id="csTq"></span></div>
-      <div class="cs-row"><span>Costo por respuesta</span><div class="cs-bg"><i id="csC"></i></div><span id="csCq"></span></div>
-      <div class="hint">Ilustrativo: lo que importa es la relación, no las cifras.</div>
+      <div class="cs-row"><span>Lo que tarda en responder</span><div class="cs-bg"><i id="csT"></i></div><span id="csTq"></span></div>
+      <div class="cs-row"><span>Lo que cuesta cada respuesta</span><div class="cs-bg"><i id="csC"></i></div><span id="csCq"></span></div>
+      <div class="hint">Ilustrativo: no son cifras reales. Lo importante es que las dos barras crecen juntas.</div>
     </div>
     <div class="col cs-card">
-      <h4>Sobre el riesgo</h4>
-      <div class="cs-q">¿Qué tan sensible es lo que va a hacer con la respuesta?</div>
+      <h4>🛡️ Riesgo: más delicado el uso, más revisión humana</h4>
+      <div class="cs-q">¿Para qué va a usar la respuesta que le dio la IA?</div>
       <input type="range" min="1" max="4" value="1" class="cs-range" id="rkSens" oninput="rkRender()" onchange="this.blur()">
       <div class="cs-val" id="rkVal"></div>
       <div class="cs-lvl" id="rkLvl"><span></span><span></span><span></span><span></span></div>
       <div class="cs-act" id="rkAct"></div>
-      <div class="cs-never">🚫 Siempre, en cualquier nivel: nada confidencial en herramientas no aprobadas por la organización.</div>
+      <div class="cs-never">🚫 En cualquier caso: nunca pegue información confidencial en herramientas que la empresa no haya aprobado.</div>
     </div>
   </div>
   <div class="insight anim" data-step="4" style="background:rgba(0,163,136,.2);color:#8FE9D3">Regla simple para su equipo: entre más importante o sensible la decisión, mayor debe ser la revisión humana antes de ejecutarla.</div>
@@ -1077,8 +1077,8 @@ function agRun(i,btn){
 }
 
 /* ===== S14 · Emparejar ===== */
-const MT_ITEMS=[['carp','📚 "Que responda con los precios y la política vigente"'],['entr','🎭 "Que hable exactamente con el estilo de la marca"'],['inst','💬 "Que responda cordial y en menos de 100 palabras"']];
-const MT_HINT={inst:'Pista: esto se logra solo diciéndole cómo responder. Es lo más rápido y barato.',carp:'Pista: para esto necesita los datos reales de la empresa, no más instrucciones.',entr:'Pista: copiar un estilo exacto exige entrenarla con miles de ejemplos. Es lo más lento y caro.'};
+const MT_ITEMS=[['carp','📚 Pedido: "Que dé los precios y la política de devoluciones reales"'],['entr','🎭 Pedido: "Que suene exactamente como nuestra marca, con su estilo propio"'],['inst','💬 Pedido: "Que conteste amable y en menos de 100 palabras"']];
+const MT_HINT={inst:'No es esa columna. Ser amable y breve se logra solo diciéndoselo: no necesita documentos ni meses de formación.',carp:'No es esa columna. Para dar precios reales necesita los documentos de la empresa: ninguna instrucción le da esos datos.',entr:'No es esa columna. Sonar exactamente como la marca exige entrenarla con miles de conversaciones reales: una nota o un manual no alcanzan.'};
 let mtSel=null,mtDone=0;
 const mtBank=document.getElementById('mtBank');
 function mtMsg(t,ok){const m=document.getElementById('mtMsg');m.textContent=t;m.classList.toggle('ok',!!ok);}
@@ -1087,7 +1087,7 @@ function mtTry(k,zone){
   if(!item||zone.classList.contains('done'))return;
   if(zone.dataset.k===k){
     zone.classList.add('done'); zone.querySelector('.mt-drop').textContent=item.textContent; item.remove(); mtDone++;
-    mtMsg(mtDone===3?'✅ Regla práctica: empiece siempre por la izquierda. El entrenamiento a la medida es el último recurso.':'✅ ¡Correcto! Mire el costo y el tiempo que aparecieron.',true);
+    mtMsg(mtDone===3?'✅ ¡Completo! Regla práctica: pruebe siempre en orden, 1 → 2 → 3. El entrenamiento a la medida es el último recurso.':'✅ ¡Correcto! Vea abajo cuánto cuesta y cuánto tarda esa opción.',true);
   }else{
     zone.classList.remove('shake');void zone.offsetWidth;zone.classList.add('shake');
     mtMsg(MT_HINT[k]);
@@ -1097,7 +1097,7 @@ function mtTry(k,zone){
 function mtReset(){
   mtSel=null;mtDone=0;
   mtBank.innerHTML=MT_ITEMS.map(([k,t])=>`<div class="mt-item" draggable="true" data-k="${k}">${t}</div>`).join('');
-  document.querySelectorAll('.mt-zone').forEach(z=>{z.classList.remove('done','over','shake');z.querySelector('.mt-drop').textContent='Suelte aquí';});
+  document.querySelectorAll('.mt-zone').forEach(z=>{z.classList.remove('done','over','shake');z.querySelector('.mt-drop').textContent='Suelte aquí el pedido';});
   mtMsg('');
 }
 mtBank.addEventListener('dragstart',e=>{const it=e.target.closest('.mt-item');if(!it)return;e.dataTransfer.setData('text/plain',it.dataset.k);});
@@ -1111,8 +1111,8 @@ document.querySelectorAll('.mt-zone').forEach(z=>{
 mtReset();
 
 /* ===== S15 · Costos y riesgos ===== */
-const CS_SIZE=['1 página','10 páginas','50 páginas','200 páginas','500 páginas'],CS_T=[12,25,45,70,95],CS_C=[8,20,42,68,96],CS_Q=['Muy bajo','Bajo','Medio','Alto','Muy alto'];
-const RK_S=['Borrador de un correo interno','Resumen que verá un cliente','Cifra que irá en un contrato','Decisión legal o financiera'];
+const CS_SIZE=['1 página (una pregunta corta)','10 páginas (un informe)','50 páginas (un contrato largo)','200 páginas (varios documentos)','500 páginas (una carpeta completa)'],CS_T=[12,25,45,70,95],CS_C=[8,20,42,68,96],CS_Q=['Muy bajo','Bajo','Medio','Alto','Muy alto'];
+const RK_S=['📨 Para un borrador de correo interno','👥 Para un resumen que leerá un cliente','📑 Para una cifra que irá en un contrato','⚖️ Para una decisión legal o financiera'];
 const RK_A=['👀 Lectura rápida antes de enviar','📝 Revisión completa del contenido','🔍 Validar cada dato contra la fuente original','✋ Aprobación de un responsable antes de ejecutar'];
 const RK_COL=['var(--teal)','var(--gold)','var(--coral)','var(--pink)'];
 function csRender(){
@@ -1127,7 +1127,7 @@ function rkRender(){
   const v=+document.getElementById('rkSens').value;
   document.getElementById('rkVal').textContent=RK_S[v-1];
   document.querySelectorAll('#rkLvl span').forEach((s,i)=>s.style.background=i<v?RK_COL[v-1]:'rgba(255,255,255,.1)');
-  document.getElementById('rkAct').textContent='Revisión humana: '+RK_A[v-1];
+  document.getElementById('rkAct').textContent='Revisión humana necesaria: '+RK_A[v-1];
 }
 csRender();rkRender();
 
