@@ -331,6 +331,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
 .cs-lvl span{flex:1;height:12px;border-radius:6px;background:rgba(255,255,255,.1);transition:background .3s}
 .cs-act{font-size:15px;font-weight:700;color:#8FE9D3;min-height:22px}
 .cs-never{margin-top:12px;font-size:13px;color:rgba(243,238,228,.65)}
+.cs-act-box{margin-top:2px;padding:10px 14px;border-radius:10px;border-left:4px solid var(--teal);background:rgba(255,255,255,.05);font-size:14.5px;font-weight:700;color:#8FE9D3;transition:border-color .3s}
 
 /* S16 · Quiz final */
 .qz{width:100%;max-width:920px}
@@ -632,11 +633,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
     </div>
     <div class="col cs-card">
       <h4>🛡️ Riesgo: más delicado el uso, más revisión humana</h4>
-      <div class="cs-q">¿Para qué va a usar la respuesta que le dio la IA?</div>
+      <div class="cs-q">¿Qué tan grave sería si la respuesta de la IA estuviera mal?</div>
       <input type="range" min="1" max="4" value="1" class="cs-range" id="rkSens" oninput="rkRender()" onchange="this.blur()">
       <div class="cs-val" id="rkVal"></div>
-      <div class="cs-lvl" id="rkLvl"><span></span><span></span><span></span><span></span></div>
-      <div class="cs-act" id="rkAct"></div>
+      <div class="cs-row"><span>Qué tan delicado es</span><div class="cs-bg"><i id="rkBar"></i></div><span id="rkLvlq"></span></div>
+      <div class="cs-act-box" id="rkActBox">Revisión requerida: <span id="rkAct"></span></div>
       <div class="cs-never">🚫 En cualquier caso: nunca pegue información confidencial en herramientas que la empresa no haya aprobado.</div>
     </div>
   </div>
@@ -1112,9 +1113,10 @@ mtReset();
 
 /* ===== S15 · Costos y riesgos ===== */
 const CS_SIZE=['1 página (una pregunta corta)','10 páginas (un informe)','50 páginas (un contrato largo)','200 páginas (varios documentos)','500 páginas (una carpeta completa)'],CS_T=[12,25,45,70,95],CS_C=[8,20,42,68,96],CS_Q=['Muy bajo','Bajo','Medio','Alto','Muy alto'];
-const RK_S=['📨 Para un borrador de correo interno','👥 Para un resumen que leerá un cliente','📑 Para una cifra que irá en un contrato','⚖️ Para una decisión legal o financiera'];
+const RK_S=['📨 Un borrador de correo interno','👥 Un resumen que leerá un cliente','📑 Una cifra que irá en un contrato','⚖️ Una decisión legal o financiera'];
 const RK_A=['👀 Lectura rápida antes de enviar','📝 Revisión completa del contenido','🔍 Validar cada dato contra la fuente original','✋ Aprobación de un responsable antes de ejecutar'];
 const RK_COL=['var(--teal)','var(--gold)','var(--coral)','var(--pink)'];
+const RK_LVL=['Bajo','Medio','Alto','Crítico'];
 function csRender(){
   const v=+document.getElementById('csSize').value-1;
   document.getElementById('csVal').textContent='📄 '+CS_SIZE[v];
@@ -1126,8 +1128,11 @@ function csRender(){
 function rkRender(){
   const v=+document.getElementById('rkSens').value;
   document.getElementById('rkVal').textContent=RK_S[v-1];
-  document.querySelectorAll('#rkLvl span').forEach((s,i)=>s.style.background=i<v?RK_COL[v-1]:'rgba(255,255,255,.1)');
-  document.getElementById('rkAct').textContent='Revisión humana necesaria: '+RK_A[v-1];
+  document.getElementById('rkBar').style.width=(v*25)+'%';
+  document.getElementById('rkBar').style.background=RK_COL[v-1];
+  document.getElementById('rkLvlq').textContent=RK_LVL[v-1];
+  document.getElementById('rkAct').textContent=RK_A[v-1];
+  document.getElementById('rkActBox').style.borderColor=RK_COL[v-1];
 }
 csRender();rkRender();
 
