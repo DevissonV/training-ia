@@ -236,6 +236,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
 .mem-res.bad{background:rgba(255,90,54,.2);color:#FF9B7D}
 .mem-res.good{background:rgba(0,163,136,.22);color:#8FE9D3}
 
+/* S7 · Modelos multimodales */
+.mm{display:flex;gap:22px;width:100%;align-items:flex-start}
+.mm-togs{flex:0 0 250px;display:flex;flex-direction:column;gap:10px}
+.mm-tog{text-align:left;background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:12px;transition:all .2s;font-size:15px;font-weight:700;color:var(--ink)}
+.mm-tog span.ic{font-size:22px}
+.mm-tog:hover{border-color:var(--coral)}
+.mm-tog.on{border-color:var(--coral);background:var(--coral-lt)}
+.mm-main{flex:1;display:flex;flex-direction:column;gap:10px}
+.mm-in{font-size:15px;font-weight:700;color:var(--ink);background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:12px 16px}
+.mm-conv{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--muted);font-weight:600;padding:0 4px}
+.mm-conv .arrow{font-size:18px;color:var(--coral)}
+.mm-out{background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:14px 18px;min-height:90px;font-size:15px;line-height:1.55;color:var(--ink)}
+.mm-out b{color:#036B57}
+
 /* S9 · Fuentes de contexto */
 .src{display:flex;gap:22px;width:100%;align-items:flex-start}
 .src-togs{flex:0 0 310px;display:flex;flex-direction:column;gap:10px}
@@ -255,7 +269,22 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
 .src-txt{font-size:15.5px;line-height:1.6;color:var(--ink)}
 .src-txt ul{padding-left:20px}
 
-/* S10 · MCP */
+/* S10 · Sesgo */
+.bs{width:100%;display:flex;flex-direction:column;gap:14px}
+.bs-switch{display:inline-flex;background:var(--paper);border:2px solid var(--line);border-radius:22px;padding:3px;align-self:flex-start}
+.bs-switch button{border:none;background:none;padding:9px 18px;border-radius:18px;font-family:'Inter',sans-serif;font-weight:700;font-size:14.5px;color:var(--muted);cursor:pointer}
+.bs-switch button.on{background:var(--ink);color:#fff}
+.bs-panel{display:flex;gap:16px;align-items:stretch}
+.bs-cands{flex:0 0 250px;display:flex;flex-direction:column;gap:8px}
+.bs-cand{background:var(--paper);border:2px solid var(--line);border-radius:12px;padding:10px 12px;font-size:13.5px;color:var(--ink);transition:all .25s}
+.bs-cand b{display:block;font-size:14px}
+.bs-cand.pick{border-color:var(--teal);background:var(--teal-lt)}
+.bs-out{flex:1;display:flex;flex-direction:column;gap:10px}
+.bs-q{font-size:15.5px;font-weight:700;color:var(--ink);background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:12px 16px}
+.bs-ans{background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:14px 18px;min-height:90px;font-size:15px;line-height:1.55;color:var(--ink)}
+.bs-tag{display:inline-block;font-size:12px;font-weight:800;border-radius:10px;padding:4px 10px;margin-bottom:8px}
+
+/* S12 · MCP */
 .mcp{width:100%;display:flex;flex-direction:column;gap:10px}
 .mcp-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .seg{display:inline-flex;background:var(--paper);border:2px solid var(--line);border-radius:22px;padding:3px}
@@ -467,7 +496,28 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
   <aside class="notes"><p>Arrastre elementos a la caja (o doble clic). Al llegar el sexto, el primero sale y queda marcado en rojo en la lista: se puede volver a arrastrar, igual que en la vida real hay que repetirle a la IA lo que olvidó.</p><p>En las herramientas reales la caja es mucho más grande, pero el principio es el mismo.</p></aside>
 </section>
 
-<section class="slide dark" id="s7" data-title="Sesión 2 · La IA no aprende de usted">
+<section class="slide" id="s7" data-title="Sesión 1 · No solo entiende texto">
+  <div class="tag tag-coral anim" data-step="0">Sesión 1 · Ejercicio interactivo</div>
+  <h2 class="htitle anim" data-step="1">No solo <b>lee texto</b></h2>
+  <p class="sub anim" data-step="2" style="max-width:880px">También puede recibir una imagen, un audio o un documento escaneado. Elija una puerta de entrada y vea qué hace por dentro.</p>
+  <div class="mm anim" data-step="3">
+    <div class="mm-togs" id="mmTogs">
+      <button class="mm-tog" data-k="texto" onclick="mmSet(this)"><span class="ic">📝</span>Texto</button>
+      <button class="mm-tog" data-k="imagen" onclick="mmSet(this)"><span class="ic">🖼️</span>Imagen</button>
+      <button class="mm-tog" data-k="audio" onclick="mmSet(this)"><span class="ic">🎙️</span>Audio</button>
+      <button class="mm-tog" data-k="doc" onclick="mmSet(this)"><span class="ic">📄</span>Documento escaneado</button>
+    </div>
+    <div class="mm-main">
+      <div class="mm-in" id="mmIn"></div>
+      <div class="mm-conv"><span id="mmConv"></span><span class="arrow">→</span><span>tokens</span><span class="arrow">→</span><span>el mismo motor de predicción de la sesión 1</span></div>
+      <div class="mm-out" id="mmOut"></div>
+    </div>
+  </div>
+  <div class="insight anim" data-step="4">El mecanismo de abajo nunca cambia: todo termina convertido en tokens que la IA relaciona y predice. Lo único que cambia es la puerta de entrada.</div>
+  <aside class="notes"><p>Retome el concepto de token de esta misma sesión: una imagen se convierte primero en una descripción, un audio se transcribe a texto, un documento escaneado se lee página por página. En los tres casos, una vez es texto, entra a la misma caja y al mismo motor de predicción ya explicado.</p><p>Dinámica: haga clic en cada botón y lea en voz alta el ejemplo de entrada y de salida. Pregunte al público qué caso de su día a día se parece a cada uno (una foto de una factura, un audio de un cliente, un contrato escaneado).</p></aside>
+</section>
+
+<section class="slide dark" id="s8" data-title="Sesión 2 · La IA no aprende de usted">
   <div class="tag tag-teal anim" data-step="0">Sesión 2 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">La IA <b>no aprende</b> de su conversación</h2>
   <p class="sub anim" data-step="2" style="max-width:880px">El modelo tiene el conocimiento congelado. La "memoria" que ofrecen algunas herramientas la guarda <b>la herramienta</b>, no el modelo. Encienda y apague la memoria, y abra la conversación del martes.</p>
@@ -489,7 +539,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
   <aside class="notes"><p>Este es el malentendido más común. El modelo no cambia ni un poco por lo que usted le cuenta hoy: es como hablar con un experto que tiene el conocimiento congelado desde que terminó su formación.</p><p>La "memoria" es de la herramienta: guarda un resumen corto en un espacio propio de su cuenta y se lo vuelve a mostrar al modelo la próxima vez, como quien le entrega una hoja de apuntes a un experto nuevo antes de empezar.</p><p>Dinámica: primero con la memoria APAGADA (la IA pregunta de nuevo). Luego ENCENDIDA (la nota viaja al modelo). Señale que el cerebro dice "Sin cambios" las dos veces.</p></aside>
 </section>
 
-<section class="slide" id="s8" data-title="Sesión 2 · Alucinación — ejercicio">
+<section class="slide" id="s9" data-title="Sesión 2 · Alucinación — ejercicio">
   <div class="tag tag-teal anim" data-step="0">Sesión 2 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">Cuando <b>inventa con total seguridad</b></h2>
   <p class="sub anim" data-step="2" style="max-width:800px">A veces la IA rellena un vacío con algo que suena correcto pero es falso, <b>sin ninguna duda en el tono</b>. Eso es una alucinación.</p>
@@ -504,7 +554,32 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
   <aside class="notes"><p>Como la IA solo predice qué palabra sigue, a veces "rellena" un vacío de información con algo que suena correcto pero es falso.</p><p>Es como un colaborador que, para no quedar mal en una reunión, responde con seguridad una cifra que en realidad no verificó.</p></aside>
 </section>
 
-<section class="slide" id="s9" data-title="Sesión 3 · Alimentar con contexto">
+<section class="slide" id="s10" data-title="Sesión 2 · Sesgo — ejercicio">
+  <div class="tag tag-teal anim" data-step="0">Sesión 2 · Ejercicio interactivo</div>
+  <h2 class="htitle anim" data-step="1">Repite <b>patrones</b>, no solo palabras</h2>
+  <p class="sub anim" data-step="2" style="max-width:880px">Aprendió de textos reales, con los sesgos que ya existían en ellos. Compare cómo pedir lo mismo cambia la respuesta.</p>
+  <div class="bs anim" data-step="3">
+    <div class="bs-switch">
+      <button class="on" id="bsVagoBtn" onclick="bsSet(false)">Pedido vago</button>
+      <button id="bsClaroBtn" onclick="bsSet(true)">Pedido con criterios explícitos</button>
+    </div>
+    <div class="bs-panel">
+      <div class="bs-cands">
+        <div class="bs-cand" id="bsC1"><b>Candidato A</b>8 años de experiencia, resultados 12% sobre la meta.</div>
+        <div class="bs-cand" id="bsC2"><b>Candidato B</b>3 años de experiencia, buenas referencias, perfil similar a gerentes anteriores.</div>
+        <div class="bs-cand" id="bsC3"><b>Candidato C</b>10 años de experiencia, resultados 20% sobre la meta, referencias verificadas.</div>
+      </div>
+      <div class="bs-out">
+        <div class="bs-q" id="bsQ"></div>
+        <div class="bs-ans"><div class="bs-tag" id="bsTag"></div><div id="bsTxt"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="insight anim" data-step="4">El sesgo no se elimina pidiéndole "que no discrimine": se reduce dándole criterios explícitos y verificables, y revisando el resultado con una mirada humana.</div>
+  <aside class="notes"><p>Igual que la alucinación, el sesgo viene del mismo mecanismo: predice lo más probable según lo que vio en su entrenamiento, y esos textos ya traían patrones y estereotipos históricos.</p><p>Con un pedido vago ("¿quién es mejor?"), puede apoyarse en impresiones generales que se parecen a decisiones pasadas. Con criterios explícitos y verificables (años de experiencia, resultados medibles, referencias), la respuesta se ancla en datos, no en parecidos.</p><p>Dinámica: cambie entre las dos pestañas y lea en voz alta cómo cambia el candidato recomendado y por qué.</p></aside>
+</section>
+
+<section class="slide" id="s11" data-title="Sesión 3 · Alimentar con contexto">
   <div class="tag tag-gold anim" data-step="0">Sesión 3 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">No sabe nada de su empresa — <b>hasta que usted se lo da</b></h2>
   <p class="sub anim" data-step="2" style="max-width:860px">Encienda cada fuente de contexto y vea cómo cambia la respuesta a <b>la misma pregunta</b>.</p>
@@ -525,7 +600,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
   <aside class="notes"><p>Retomando la sesión 1: el contexto es la "caja" de la conversación. El modelo por sí solo conoce lo general de su entrenamiento, nada de los documentos internos de su empresa.</p><p>Manual: usted pega o adjunta el documento. Por búsqueda: el sistema busca solo el fragmento relevante entre los documentos de la organización. Persistente ("la libreta"): la herramienta guarda preferencias en su cuenta, por ejemplo que prefiere viñetas.</p><p>Seguridad: esa libreta vive en su cuenta, en la herramienta aprobada. El modelo no se queda con su información ni la comparte.</p></aside>
 </section>
 
-<section class="slide" id="s10" data-title="Sesión 3 · MCP">
+<section class="slide" id="s12" data-title="Sesión 3 · MCP">
   <div class="tag tag-gold anim" data-step="0">Sesión 3 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">El <b>adaptador universal de viaje</b></h2>
   <p class="sub anim" data-step="2" style="max-width:860px">Un solo estándar para conectar la IA a todos los sistemas de la empresa. Ese estándar se llama <b>MCP</b>. Compare y agregue sistemas:</p>
@@ -543,7 +618,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
   <aside class="notes"><p>Cuando viaja a otro país no compra un cargador distinto para cada enchufe: compra un adaptador universal. MCP es el equivalente para que una IA se conecte a distintos sistemas sin construir cada conexión a mano y por separado.</p><p>No hace falta memorizar la sigla: basta con reconocer que se refiere a este adaptador.</p><p>Dinámica: agregue sistemas "Sin estándar" (cada uno suma una conexión distinta) y luego cambie a "Con MCP".</p></aside>
 </section>
 
-<section class="slide" id="s11" data-title="Sesión 3 · Prompt vs. skill">
+<section class="slide" id="s13" data-title="Sesión 3 · Prompt vs. skill">
   <div class="tag tag-pink anim" data-step="0">Sesión 3 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">Prompt improvisado <b>vs. receta guardada</b></h2>
   <p class="sub anim" data-step="2" style="max-width:880px">Un <b>prompt</b> se escribe cada vez. Un <b>skill</b> es ese procedimiento escrito una vez, probado y guardado. Simule una semana de trabajo:</p>
@@ -575,7 +650,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
 
 
 
-<section class="slide dark" id="s13" data-title="Sesión 3 · Qué es un agente">
+<section class="slide dark" id="s14" data-title="Sesión 3 · Qué es un agente">
   <div class="tag tag-pink anim" data-step="0">Sesión 3 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">El agente: <b>quien decide qué receta usar</b></h2>
   <p class="sub anim" data-step="2" style="max-width:880px">Recibe un <b>objetivo</b>, decide qué skills usar y, si hace falta, le pasa una parte a <b>otro agente especializado</b>. Elija un caso:</p>
@@ -600,7 +675,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
   <aside class="notes"><p>Un agente es una IA a la que se le da un objetivo — no una receta puntual — y ella misma decide cuál de sus skills usar, en qué orden, y las ejecuta.</p><p>Puede ir un paso más allá: si la tarea lo requiere, llama a otro agente especializado, igual que un jefe de equipo que deriva un tema a otro equipo experto.</p><p>Dinámica: primero el reclamo simple (el Agente Legal queda apagado). Luego el que menciona el contrato: se ve cómo le pasa esa parte al Agente Legal.</p></aside>
 </section>
 
-<section class="slide" id="s14" data-title="Sesión 4 · Tres formas de especializar">
+<section class="slide" id="s15" data-title="Sesión 4 · Tres formas de especializar">
   <div class="tag tag-coral anim" data-step="0">Sesión 4 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">Tres formas de <b>"capacitar" a la IA</b></h2>
   <p class="sub anim" data-step="2" style="max-width:880px"><b>El caso:</b> su empresa va a poner una IA a responder preguntas de clientes, como si fuera un empleado nuevo de atención. El gerente hace <b>3 pedidos</b>: arrastre cada pedido a la forma de preparar a la IA que lo resuelve.</p>
@@ -617,7 +692,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
   <aside class="notes"><p>Piense en tres formas distintas de preparar a un empleado nuevo para el mismo rol. Elegir la correcta es una decisión de costo y tiempo, no solo técnica.</p><p>Instrucciones claras: "Responde siempre cordial, en menos de 100 palabras, y ofrece escalar a un asesor". Rápido y barato: la primera opción a probar siempre.</p><p>Carpeta correcta: darle el catálogo real y la política vigente de devoluciones (lo visto en la sesión 3).</p><p>Entrenamiento a la medida: varios meses con miles de conversaciones reales para replicar el estilo exacto de la marca. Solo cuando las dos primeras ya no alcanzan.</p></aside>
 </section>
 
-<section class="slide dark" id="s15" data-title="Sesión 4 · Costos y riesgos">
+<section class="slide dark" id="s16" data-title="Sesión 4 · Costos y riesgos">
   <div class="tag tag-teal anim" data-step="0">Sesión 4 · Ejercicio interactivo</div>
   <h2 class="htitle anim" data-step="1">Lo que <b>nadie le explica de entrada</b></h2>
   <p class="sub anim" data-step="2" style="max-width:880px">Dos preguntas que conviene hacerse antes de usar IA en su equipo. Mueva cada control de izquierda a derecha y vea qué cambia.</p>
@@ -645,7 +720,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
   <aside class="notes"><p>Costo: mientras más grande la "caja" que le da a la IA, más tarda y más cuesta cada respuesta. Conecta con los tokens de la sesión 1.</p><p>Riesgo: nunca comparta información confidencial en una herramienta no aprobada, y valide siempre antes de actuar (recuerde la alucinación de la sesión 2).</p></aside>
 </section>
 
-<section class="slide" id="s16" data-title="Cierre · Mapa de decisión">
+<section class="slide" id="s17" data-title="Cierre · Mapa de decisión">
   <div class="eyebrow anim" data-step="0">Cierre · Ejercicio final</div>
   <h2 class="htitle anim" data-step="1">¿Prompt, skill <b>o agente?</b></h2>
   <div class="qz anim" data-step="2">
@@ -668,7 +743,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
 <div id="ctrl">
   <button class="cbtn" id="bprev"><svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg>Anterior</button>
   <div class="cdiv"></div>
-  <span id="cnt">1 / 16</span>
+  <span id="cnt">1 / 17</span>
   <div class="cdiv"></div>
   <button class="cbtn" id="banim"><svg viewBox="0 0 16 16"><path d="M5 3l8 5-8 5V3z"/></svg>Animar</button>
   <div class="cdiv"></div>
@@ -683,7 +758,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--dark);font-fam
 const slides=document.querySelectorAll('.slide');
 const total=slides.length;
 let cur=0,step=0;
-const titles=['Portada','Las cuatro sesiones','Qué hace la IA (ejercicio)','Qué es un token (ejercicio)','El contexto se acumula (ejercicio)','Ventana de contexto (ejercicio)','La IA no aprende de usted (ejercicio)','Alucinación (ejercicio)','Alimentar con contexto (ejercicio)','El adaptador universal: MCP (ejercicio)','Prompt vs. skill (ejercicio)','Qué es un agente (ejercicio)','Tres formas de especializar (ejercicio)','Costos y riesgos (ejercicio)','Cierre: ¿prompt, skill o agente?'];
+const titles=['Portada','Las cuatro sesiones','Qué hace la IA (ejercicio)','Qué es un token (ejercicio)','El contexto se acumula (ejercicio)','Ventana de contexto (ejercicio)','No solo entiende texto (ejercicio)','La IA no aprende de usted (ejercicio)','Alucinación (ejercicio)','Sesgo (ejercicio)','Alimentar con contexto (ejercicio)','El adaptador universal: MCP (ejercicio)','Prompt vs. skill (ejercicio)','Qué es un agente (ejercicio)','Tres formas de especializar (ejercicio)','Costos y riesgos (ejercicio)','Cierre: ¿prompt, skill o agente?'];
 
 function getA(sl){return [...sl.querySelectorAll('[data-step]')].sort((a,b)=>+a.dataset.step - +b.dataset.step)}
 function resetA(){getA(slides[cur]).forEach(el=>el.classList.remove('in'));step=0}
@@ -909,7 +984,24 @@ function accClose(){
 }
 accRender();
 
-/* ===== S7 · Memoria de la herramienta ===== */
+/* ===== S7 · Modelos multimodales ===== */
+const MM_DATA={
+  texto:{conv:'Ya son tokens de texto',in:'📝 "Redácteme un correo pidiendo el ajuste del contrato."',out:'Estimado proveedor: le escribo para solicitar un ajuste en las condiciones del contrato vigente…'},
+  imagen:{conv:'Describe lo que "ve" en texto',in:'🖼️ Foto borrosa de una factura, tomada con el celular.',out:'Detecté: <b>Factura #4521</b>, total $850.000, vence 15/03. ¿Quiere que registre el pago o le recuerde la fecha?'},
+  audio:{conv:'Transcribe el audio a texto',in:'🎙️ Nota de voz de 40 segundos de un cliente molesto.',out:'Transcripción: "el pedido llegó incompleto y necesito la reposición esta semana." Tono: urgente. ¿Redacto la respuesta?'},
+  doc:{conv:'Lee cada página como imagen y extrae el texto',in:'📄 Contrato escaneado de 12 páginas.',out:'La cláusula de penalidad por retraso está en la página 7: <b>2% del valor total por semana de atraso</b>.'}
+};
+function mmSet(b){
+  document.querySelectorAll('.mm-tog').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  const d=MM_DATA[b.dataset.k];
+  document.getElementById('mmIn').textContent=d.in;
+  document.getElementById('mmConv').textContent=d.conv;
+  const o=document.getElementById('mmOut'); o.innerHTML=d.out; o.classList.remove('pop'); void o.offsetWidth; o.classList.add('pop');
+}
+mmSet(document.querySelector('.mm-tog[data-k="texto"]'));
+
+/* ===== S8 · Memoria de la herramienta ===== */
 let memBusy=false,memTimers=[];
 function memClear(){memTimers.forEach(clearTimeout);memTimers=[];memBusy=false;document.getElementById('memTue').innerHTML='<div class="mem-day">Martes · conversación nueva</div><div class="mem-empty">Aún no empieza</div>';}
 function memToggle(){
@@ -939,7 +1031,29 @@ function memRun(){
   memTimers.push(setTimeout(()=>{stamp.classList.remove('flash');void stamp.offsetWidth;stamp.classList.add('flash');memBusy=false;},end));
 }
 
-/* ===== S9 · Fuentes de contexto ===== */
+/* ===== S10 · Sesgo ===== */
+function bsSet(claro){
+  document.getElementById('bsVagoBtn').classList.toggle('on',!claro);
+  document.getElementById('bsClaroBtn').classList.toggle('on',claro);
+  ['bsC1','bsC2','bsC3'].forEach(id=>document.getElementById(id).classList.remove('pick'));
+  const q=document.getElementById('bsQ'),tag=document.getElementById('bsTag'),txt=document.getElementById('bsTxt');
+  if(!claro){
+    q.textContent='¿Quién de estos tres perfiles es mejor para gerente de ventas?';
+    document.getElementById('bsC2').classList.add('pick');
+    tag.textContent='⚠️ Puede repetir un patrón histórico';
+    tag.style.background='var(--coral-lt)';tag.style.color='#B8330E';
+    txt.innerHTML='Yo elegiría al <b>candidato B</b>: su perfil se parece más al de los gerentes de ventas exitosos anteriores en la empresa.';
+  }else{
+    q.textContent='Evalúe solo con estos 3 criterios: años de experiencia, resultados de ventas comprobables y referencias verificadas.';
+    document.getElementById('bsC3').classList.add('pick');
+    tag.textContent='✅ Criterios explícitos y verificables';
+    tag.style.background='var(--teal-lt)';tag.style.color='#036B57';
+    txt.innerHTML='Con esos criterios, el <b>candidato C</b> tiene más años de experiencia, mejores resultados comprobables y referencias verificadas.';
+  }
+}
+bsSet(false);
+
+/* ===== S11 · Fuentes de contexto ===== */
 const SRC={manual:false,busq:false,lib:false};
 const SRC_TXT={
   gen:['Depende de cada empresa.','Normalmente los plazos van de 15 a 30 días.','Le sugiero revisar la política de su organización.'],
